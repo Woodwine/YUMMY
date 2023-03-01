@@ -3,6 +3,17 @@
 {% block title %}Продукты{% endblock %}
 
 {% block content %}
+    <h3>
+        <a href="{% url 'home' %}">
+            Вернуться на главную страницу
+        </a>
+    </h3>
+    <h3>
+        <a href="{% url 'goods' %}">
+            Вернуться на страницу с ингредиентами
+        </a>
+    </h3>
+
     <div>
         <a href="{% url 'add_product' %}">
             Добавить продукт

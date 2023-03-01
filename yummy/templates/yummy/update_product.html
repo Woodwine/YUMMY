@@ -8,4 +8,15 @@
         {{ form }}
         <button type="submit" value="Update">Отправить</button>
     </form>
+    <h3>
+        <a href="{% url 'home' %}">
+            Вернуться на главную страницу
+        </a>
+    </h3>
+    <h3>
+        <a href="{% url 'goods' %}">
+            Вернуться на страницу с ингредиентами
+        </a>
+    </h3>
+
 {% endblock %}

@@ -63,6 +63,13 @@ class DoneView(TemplateView):
     # Success adding products
     template_name = 'yummy/done.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = Goods.objects.order_by('id').last()
+        context['product_name'] = product.name
+        context['product_type'] = product.type
+        return context
+
 
 class UpdateDoneView(TemplateView):
     template_name = 'yummy/update_done.html'

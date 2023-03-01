@@ -80,65 +80,6 @@ class Goods(models.Model):
 class Ingredient(models.Model):
     """A class for presenting an ingredient"""
 
-    # INGREDIENTS = (
-    #     ('мясо и птица', (
-    #         ('chicken', 'курица'), ('beef', 'говядина'), ('pork', 'свинина'),
-    #     )
-    #      ),
-    #     ('рыба', (
-    #         ('salmon', 'лосось'), ('с_tuna', 'тунец консервированный'), ('mackerel', 'скумбрия'),
-    #         ('pollock', 'минтай'), ('cod', 'треска'),
-    #     )),
-    #     ('овощи', (
-    #         ('potato', 'картофель'), ('carrot', 'моковь'), ('onion', 'лук'), ('corn', 'кукуруза'),
-    #         ('mushrooms', 'грибы'), ('lettuce', 'салат'), ('c_corn', 'консервированная кукуруза'),
-    #         ('champignons', 'шампиньоны'), ('arugula', 'руккола'), ('cabbage', 'капуста'),
-    #         ('cauliflower', 'цветная капуста'), ('broccoli', 'брокколи'), ('beet', 'свекла'),
-    #         ('garlic', 'чеснок'), ('basil', 'базилик'), ('tomatoes', 'помидор'),
-    #         ('cucumber', 'огурец'), ('paprika', 'сладкий перец'), ('hot_pepper', 'острый перец'),
-    #         ('zucchini', 'кабачок'), ('eggplant', 'баклажан'), ('pumpkin', 'тыква'),
-    #         ('b_olives', 'маслины'), ('olives', 'оливки'), ('string beans', 'стручковая фасоль'),
-    #         ('parsley', 'петрушка'), ('cilantro', 'кинза'), ('dill', 'укроп'),
-    #     )),
-    #     ('яйца', (
-    #         ('egg', 'яйцо'), ('yolk', 'желток'), ('protein', 'белок')
-    #     )),
-    #     ('фрукты', (
-    #         ('apple', ''), ('orange', ''), ('banana', ''), ('strawberry', 'клубника'), ('peach', 'персик'),
-    #         ('pear', 'груша'), ('grape', 'виноград'),
-    #     )),
-    #     ('крупы', (
-    #         ('buckwheat', 'гречка'), ('haricot', 'фасоль'), ('lentils', 'чечевица'), ('rice', 'рис'),
-    #         ('couscous', 'кускус'), ('bulgur', 'булгур'), ('pasta', 'макароны'), ('spaghetti', 'спагетти'),
-    #     )),
-    #     ('специи', (
-    #         ('bl_pepper', 'черный перец'), ('cinnamon', 'корица'), ('coriander', 'кориандр'),
-    #         ('mustard', 'горчица'), ('ginger', 'имбирь'), ('red wine', 'красное вино'),
-    #         ('white wine', 'белое вино'), ('beer', 'пиво'),
-    #     )),
-    #     ('соусы', (
-    #         ('mustard', 'горчица'), ('ketchup', 'кетчуп'), ('tomato paste', 'томатная паста'),
-    #         ('mayonnaise', 'майонез'), ('balsamic', 'бальзамический соус'), ('vinegar', 'уксус'),
-    #         ('lemon juice', 'лимонный сок'), ('sugar', 'сахар'), ('salt', 'соль'),
-    #     )),
-    #     ('молочные продукты', (
-    #         ('milk', 'молоко'), ('sour cream', 'сметана'), ('cream', 'сливки'), ('kefir', 'кефир'),
-    #         ('yogurt', 'йогурт'), ('curd', 'творог'), ('cheese', 'сыр'), ('parmesan', 'пармезан'),
-    #         ('mozzarella', 'моцарелла')
-    #     )),
-    #     ('выпечка', (
-    #         ('flour', 'мука'), ('yeasts', 'дрожжи'), ('soda', 'сода'), ('baking powder', 'разрыхлитель'),
-    #
-    #     )),
-    #     ('напитки', (
-    #         ('cocoa', 'какао'), ('coffee', 'кофе'), ('water', 'вода'), ('tea', 'чай'), ('apple juice', 'яблочный сок'),
-    #         ('orange juice', 'апельсиновый сок'),
-    #     )),
-    #     ('сухофрукты', (
-    #         ('raisin', 'изюм'), ('prunes', 'чернослив'), ('walnuts', 'грецкие орехи'),
-    #         ('almond', 'миндаль'), ('peanut', 'арахис'), ('dried apricots', 'курага'),
-    # )))
-
     ingredient = models.ForeignKey(Goods, on_delete=models.CASCADE)
     quantity = models.FloatField(default=1)
     quantity_type = EnumChoiceField(ProductQuantity, default=ProductQuantity.GR, verbose_name='Колличество')
