@@ -1,0 +1,18 @@
+{% extends 'yummy/base.html' %}
+
+{% block title %}Добавить продукт{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+{#        {{ form }}#}
+        {% for field in form %}
+            <div class="form-style {% if field.errors %} errors {% endif %}">
+                {{ field.label_tag }}
+                {{ field.errors }}
+                {{ field }}
+            </div>
+        {% endfor %}
+        <button type="submit">Отправить</button>
+    </form>
+{% endblock %}

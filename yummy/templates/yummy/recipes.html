@@ -1,0 +1,16 @@
+{% extends 'yummy/base.html' %}
+
+{% block title %}Рецепты{% endblock %}
+
+{% block content %}
+    <h2>Список рецептов</h2>
+    <ul>
+        {% for recipe in all_recipes %}
+            <li>
+                <a href="{{ recipe.get_absolut_url }}">
+                    {{ recipe }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'yummy/base.html' %}
+
+{% block title %}{{ recipe }}{% endblock %}
+
+{% block content %}
+    <h2>Название рецепта: {{ recipe.name }}</h2>
+    <ol>
+        <li>
+            {{ recipe.author }}
+        </li>
+        <li>
+            {{ recipe.date }}
+        </li>
+        <li>
+            {{ recipe.time_in_minutes }}
+        </li>
+        <li>
+            {{ recipe.ingredients }}
+        </li>
+        <li>
+            {{ recipe.description }}
+        </li>
+        <li>
+            {{ recipe.department }}
+        </li>
+        <li>
+            {{ recipe.cuisine }}
+        </li>
+    </ol>
+{% endblock %}

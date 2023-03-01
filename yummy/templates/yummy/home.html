@@ -2,4 +2,28 @@
 
 {% block title %}Домашняя страница{% endblock %}
 
-{% block content %}Контент{% endblock %}
+{% block content %}
+    <div>
+        <a href="{% url 'recipes' %}">
+            Рецепты:
+        </a>
+    </div>
+    <div>
+        <ul>
+            {% for item in homepage_recipes %}
+                <li>
+                    <a href="{{ item.get_url }}">
+                        {{ item }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <br>
+    <div>
+        <a href="{% url 'goods' %}">
+            Ингредиенты
+        </a>
+    </div>
+
+{% endblock %}

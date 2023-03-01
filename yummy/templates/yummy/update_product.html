@@ -1,0 +1,11 @@
+{% extends 'yummy/base.html' %}
+
+{% block title %}Изменить продукт{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit" value="Update">Отправить</button>
+    </form>
+{% endblock %}

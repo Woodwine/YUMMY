@@ -1,0 +1,21 @@
+{% extends 'yummy/base.html' %}
+
+{% block title %}Продукты{% endblock %}
+
+{% block content %}
+    <div>
+        <a href="{% url 'add_product' %}">
+            Добавить продукт
+        </a>
+    </div>
+    <h2>Продукты</h2>
+    <ul>
+        {% for product in goods %}
+            <li>
+                <a href="{{ product.get_url }}">
+                    {{ product }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

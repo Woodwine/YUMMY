@@ -1,0 +1,12 @@
+{% extends 'yummy/base.html' %}
+
+{% block title %}Обновить продукт{% endblock %}
+
+{% block content %}
+    <h2>Продукт успешно обновлен:</h2>
+    <h3>
+        <a href="{% url 'home' %}">
+            Вернуться на главную страницу
+        </a>
+    </h3>
+{% endblock %}

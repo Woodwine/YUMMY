@@ -1,0 +1,17 @@
+{% extends 'yummy/base.html' %}
+
+{% block title %}Информация о продукте: {{ product }}{% endblock %}
+
+{% block content %}
+
+    <h2>Название продукта - {{ product.name }}</h2>
+    <h3>Тип продукта - {{ product.type }}</h3>
+    <div><a href="{% url 'update_product' product.pk %}">
+            Редактировать продукт
+        </a>
+    </div>
+    <div><a href="{% url 'delete_product' product.pk %}">
+            Удалить продукт
+        </a>
+    </div>
+{% endblock %}

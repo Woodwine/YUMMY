@@ -1,5 +1,5 @@
 from django.contrib import admin, messages
-from .models import Cuisine, Ingredient, Recipe, Department
+from .models import Ingredient, Recipe, Goods
 
 # Register your models here.
 
@@ -12,19 +12,16 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ['cuisine', 'department']
 
 
-@admin.register(Cuisine)
-class CuisineAdmin(admin.ModelAdmin):
-    ordering = ['cuisine_name']
-    search_fields = ['cuisine_name']
-
-
-@admin.register(Department)
-class DepartmentAdmin(admin.ModelAdmin):
-    ordering = ['department_name']
-    search_fields = ['department_name']
+@admin.register(Goods)
+class GoodsAdmin(admin.ModelAdmin):
+    list_display = ['name', 'type']
+    ordering = ['name']
+    search_fields = ['name', 'type']
+    list_filter = ['name', 'type']
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
+    list_display = ['ingredient', 'quantity', 'quantity_type']
     ordering = ['ingredient']
     search_fields = ['ingredient']
