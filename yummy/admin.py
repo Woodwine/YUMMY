@@ -6,9 +6,9 @@ from .models import Ingredient, Recipe, Goods
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ['name', 'date', 'author']
+    list_display = ['name', 'date']
     ordering = ['date']
-    search_fields = ['name', 'author']
+    search_fields = ['name']
     list_filter = ['cuisine', 'department']
 
 
@@ -22,6 +22,6 @@ class GoodsAdmin(admin.ModelAdmin):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ['ingredient', 'quantity', 'quantity_type']
+    list_display = ['ingredient', 'quantity', 'quantity_type', 'recipe']
     ordering = ['ingredient']
     search_fields = ['ingredient']

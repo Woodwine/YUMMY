@@ -3,19 +3,34 @@
 {% block title %}{{ recipe }}{% endblock %}
 
 {% block content %}
+    <h3>
+        <a href="{% url 'home' %}">
+            Вернуться на главную страницу
+        </a>
+    </h3>
+    <h3>
+        <a href="{% url 'recipes' %}">
+            Вернуться на страницу с рецептами
+        </a>
+    </h3>
     <h2>Название рецепта: {{ recipe.name }}</h2>
     <ol>
+{#        <li>#}
+{#            {{ recipe.author }}#}
+{#        </li>#}
         <li>
-            {{ recipe.author }}
+            {{ recipe.date|date:'d.m.Y' }}
+        </li>
+        <li>{% if recipe.time_in_hours != None and recipe.time_in_hours != 0 %}
+            {{ recipe.time_in_hours }} ч.
+            {% endif %}
+            {{ recipe.time_in_minutes }} мин.
         </li>
         <li>
-            {{ recipe.date }}
-        </li>
-        <li>
-            {{ recipe.time_in_minutes }}
-        </li>
-        <li>
-            {{ recipe.ingredients }}
+            {% for ingridient in ingredients %}
+                {{ ingridient.ingredient.name }}
+                {{ ingridient.quantity }} {{ ingridient.quantity_type }}
+            {% endfor %}
         </li>
         <li>
             {{ recipe.description }}

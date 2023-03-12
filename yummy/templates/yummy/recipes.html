@@ -3,11 +3,14 @@
 {% block title %}Рецепты{% endblock %}
 
 {% block content %}
+    <div>
+        <a href="{% url 'add_recipe' %}">Добавить рецепт</a>
+    </div>
     <h2>Список рецептов</h2>
     <ul>
         {% for recipe in all_recipes %}
             <li>
-                <a href="{{ recipe.get_absolut_url }}">
+                <a href="{% url 'recipe-details' recipe.slug %}">
                     {{ recipe }}
                 </a>
             </li>

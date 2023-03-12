@@ -1,0 +1,46 @@
+{% extends 'yummy/base.html' %}
+
+{% block title %}Добавить рецепт{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+
+            {{ recipe_form.management_form }}
+            {{ recipe_form.non_form_erros }}
+
+            {% for field in recipe_form %}
+            <div class="form-style {% if field.errors %} errors {% endif %}">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }}
+            </div>
+            {% endfor %}
+
+            {{ formset.management_form }}
+            {{ formset.non_form_erros }}
+
+            <div>
+                <h3>Ингредиенты:</h3>
+                {% for form in formset %}
+                <div class="form-style {% if forms.errors %} errors {% endif %}">
+
+                    {{ form.errors }}
+                    {{ form.as_p }}
+                </div>
+                {% endfor %}
+            </div>
+        <button type="submit">Отправить</button>
+    </form>
+    <h3>
+        <a href="{% url 'home' %}">
+            Вернуться на главную страницу
+        </a>
+    </h3>
+    <h3>
+        <a href="{% url 'recipes' %}">
+            Вернуться на страницу с рецептами
+        </a>
+    </h3>
+
+
+{% endblock %}
