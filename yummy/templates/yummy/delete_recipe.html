@@ -1,11 +1,12 @@
 {% extends 'yummy/base.html' %}
 
-{% block title %}Удалить продукт{% endblock %}
+{% block title %}Удалить рецепт {{ object.name }}{% endblock %}
 
 {% block content %}
     <form action="" method="post">
         {% csrf_token %}
         <p>Вы уверены что вы хотите удалить {{ object }}?</p>
+        {{ form }}
         <button type="submit" value="Confirm">Удалить</button>
     </form>
     <h3>
@@ -14,8 +15,8 @@
         </a>
     </h3>
     <h3>
-        <a href="{% url 'goods' %}">
-            Вернуться на страницу с ингредиентами
+        <a href="{% url 'recipes' %}">
+            Вернуться на страницу с рецептами
         </a>
     </h3>
 

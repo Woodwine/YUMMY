@@ -38,13 +38,6 @@ class AddIngredient(forms.ModelForm):
         }
 
 
-IngredientFormSet = inlineformset_factory(Recipe, Ingredient, fields=('ingredient', 'quantity', 'quantity_type'),
-                                            extra=1, max_num=1, validate_max=False)
-# IngredientFormSet_2 = inlineformset_factory(Recipe, Ingredient, fields=('ingredient', 'recipe',), extra=1, max_num=1)
-# IngredientFormSet = modelformset_factory(Ingredient, form=AddIngredient, exclude=['recipe'])
-# IngredientFormSet = modelformset_factory(Ingredient, fields=['ingredient', 'quantity', 'quantity_type'], extra=1)
-
-
 class AddRecipe(forms.ModelForm):
 
     class Meta:

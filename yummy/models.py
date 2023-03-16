@@ -118,7 +118,7 @@ class Ingredient(models.Model):
     """A class for presenting an ingredient"""
 
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    ingredient = models.ForeignKey(Goods, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Goods, on_delete=models.CASCADE, verbose_name='Ингредиент')
     quantity = models.PositiveIntegerField(default=1, blank=True, verbose_name='Количество')
     quantity_type = EnumChoiceField(ProductQuantity, default=ProductQuantity.GR, verbose_name='Единицы измерения')
 

@@ -12,7 +12,9 @@
             <li>
                 <a href="{% url 'recipe-details' recipe.slug %}">
                     {{ recipe }}
-                </a>
+                </a> |
+                <a href="{% url 'update_recipe' recipe.pk %}">Изменить рецепт</a> |
+                <a href="{% url 'delete_recipe' recipe.pk %}">Удалить рецепт</a>
             </li>
         {% endfor %}
     </ul>

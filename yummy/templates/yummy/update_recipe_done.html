@@ -1,0 +1,18 @@
+{% extends 'yummy/base.html' %}
+
+{% block title %}Обновить рецепт{% endblock %}
+
+{% block content %}
+    <h1>{{ recipe_name }}</h1>
+    <h2>Рецепт успешно обновлен!</h2>
+    <h3>
+        <a href="{% url 'home' %}">
+            Вернуться на главную страницу
+        </a>
+    </h3>
+    <h3>
+        <a href="{% url 'recipes' %}">
+            Вернуться на страницу с рецептами
+        </a>
+    </h3>
+{% endblock %}

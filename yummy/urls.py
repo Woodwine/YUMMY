@@ -14,8 +14,10 @@ urlpatterns = [
     path('recipes/', views.AllRecipes.as_view(), name='recipes'),
     path('recipes/<slug:slug>', views.OneRecipe.as_view(), name='recipe-details'),
     path('add_recipe/', views.add_recipe, name='add_recipe'),
-    # path('update_recipe/<int:pk>', views.RecipeUpdate.as_view(), name='update_recipe'),
+    path('update_recipe/<int:pk>', views.update_recipe, name='update_recipe'),
+    path('update_recipe_done/', views.RecipeUpdateDoneView.as_view(), name='update_recipe_done'),
+    path('delete_recipe/<int:pk>', views.DeleteRecipeView.as_view(), name='delete_recipe'),
+    path('delete_recipe_done/', views.DeleteRecipeDoneView.as_view(), name='delete_recipe_done'),
     path('recipe_done/', views.add_recipe, name='recipe_done')
-    # path('delete_ingredient/<int:pk>', views.delete_ingredient, name='delete_ingredient'),
 ]
 

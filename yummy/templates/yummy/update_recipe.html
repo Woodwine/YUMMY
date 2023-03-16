@@ -1,12 +1,10 @@
 {% extends 'yummy/base.html' %}
-{% load static %}
 
-{% block title %}Добавить рецепт{% endblock %}
+{% block title %}Изменить рецепт{% endblock %}
 
 {% block content %}
-    <form action="" method="post" >
+    <form action="" method="post">
         {% csrf_token %}
-
             {{ recipe_form.management_form }}
             {{ recipe_form.non_form_erros }}
 
@@ -26,8 +24,8 @@
                 {% for form in formset %}
                 <div class="form-style {% if forms.errors %} errors {% endif %}">
                     <div class="ingredient-form">
-                    {{ form.errors }}
-                    {{ form.as_p }}
+                        {{ form.errors }}
+                        {{ form }}
                     </div>
                 </div>
                 {% endfor %}
@@ -37,8 +35,8 @@
         <button type="submit">Отправить</button>
     </form>
     <h3>
-        <a href="{% url 'home' %}">
-            Вернуться на главную страницу
+        <a href="{% url 'delete_recipe' recipe_pk %}">
+            Удалить рецепт
         </a>
     </h3>
     <h3>
@@ -46,6 +44,12 @@
             Вернуться на страницу с рецептами
         </a>
     </h3>
+    <h3>
+        <a href="{% url 'home' %}">
+            Вернуться на главную страницу
+        </a>
+    </h3>
+
     <script>
         let ingredientForm = document.querySelectorAll(".ingredient-form")
         let container = document.querySelector("#form-container")
@@ -68,6 +72,5 @@
             totalForms.setAttribute('value', `${formNum+1}`)
         }
     </script>
-
 
 {% endblock %}
