@@ -1,29 +1,81 @@
-{% extends 'yummy/base.html' %}
+{% extends 'base.html' %}
+{% load static %}
+{% block add_css %}
+<link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
+{% endblock %}
 
 {% block title %}Домашняя страница{% endblock %}
 
 {% block content %}
-    <div>
-        <a href="{% url 'recipes' %}">
-            Рецепты:
+<div class="content__recipes container">
+    <div class="recipes__title">
+        <h3><strong>Каталог рецептов</strong></h3>
+    </div>
+    <div class="recipes__wrapp">
+        {% for item in recipes %}
+        <a href="{{ item.get_absolute_url }}">
+            <div class="card recipes__card" style="width: 15rem;">
+                <img src="{% static 'img/food.jpeg' %}" class="card-img-top" alt="recipe">
+                <div class="card-body">
+                    <h5 class="card-text">{{ item }}</h5>
+                </div>
+            </div>
         </a>
+        {% endfor %}
+        <div class="card recipes__card last-card" style="width: 15rem;">
+            <img src="{% static 'img/food.jpeg' %}" class="card-img-top" alt="recipe">
+            <div class="card-body">
+                <a href="#" class="btn btn-lg btn-primary"><strong>Все рецепты</strong></a>
+            </div>
+        </div>
     </div>
-    <div>
-        <ul>
-            {% for item in homepage_recipes %}
-                <li>
-                    <a href="{{ item.get_absolute_url }}">
-                        {{ item }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
+</div>
+<div class="content__cuisines container">
+    <div class="recipes__title">
+        <h3><strong>Кухни мира</strong></h3>
     </div>
-    <br>
-    <div>
-        <a href="{% url 'goods' %}">
-            Ингредиенты
+    <div class="recipes__wrapp">
+        {% for cuisine, c_img in cuisines.items %}
+        <a href='#'>
+            <div class="card recipes__card" style="width: 15rem;">
+                <img src={{ c_img }} class="card-img-top" alt="recipe">
+                <div class="card-body">
+                    <h4 class="card-text">{{ cuisine }}</h4>
+                </div>
+            </div>
         </a>
+        {% endfor %}
+        <div class="card recipes__card last-card" style="width: 15rem;">
+            <img src="{% static 'img/food.jpeg' %}" class="card-img-top" alt="recipe">
+            <div class="card-body">
+                <a href="#" class="btn btn-lg btn-primary"><strong>Все кухни</strong></a>
+            </div>
+        </div>
     </div>
+</div>
+<div class="content__departments container">
+    <div class="recipes__title">
+        <h3><strong>Типы блюд</strong></h3>
+    </div>
+    <div class="recipes__wrapp">
+        {% for department, d_img in departments.items %}
+        <a href='#'>
+            <div class="card recipes__card" style="width: 15rem;">
+                <img src={{ d_img }} class="card-img-top" alt="recipe">
+                <div class="card-body">
+                    <h4 class="card-text">{{ department }}</h4>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+        <div class="card recipes__card last-card" style="width: 15rem;">
+            <img src="{% static 'img/food.jpeg' %}" class="card-img-top" alt="recipe">
+            <div class="card-body">
+                <a href="#" class="btn btn-lg btn-primary"><strong>Все типы блюд</strong></a>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends 'yummy/base.html' %}
+{% extends 'base.html' %}
 
 {% block title %}{{ recipe }}{% endblock %}
 
@@ -21,15 +21,17 @@
         <li>
             {{ recipe.date|date:'d.m.Y' }}
         </li>
-        <li>{% if recipe.time_in_hours != None and recipe.time_in_hours != 0 %}
-            {{ recipe.time_in_hours }} ч.
+        <li>{% if recipe.time // 60 != 0 %}
+            {{ recipe.time // 60 }} ч.
+            {{ recipe.time % 60 }} мин.
+            {% else %}
+            {{ recipe.time }} мин.
             {% endif %}
-            {{ recipe.time_in_minutes }} мин.
         </li>
         <li>
-            {% for ingridient in ingredients %}
-                {{ ingridient.ingredient.name }}
-                {{ ingridient.quantity }} {{ ingridient.quantity_type }}
+            {% for ingredient in ingredients %}
+                {{ ingredient.ingredient.name }}
+                {{ ingredient.quantity }} {{ ingredient.quantity_type }}
             {% endfor %}
         </li>
         <li>

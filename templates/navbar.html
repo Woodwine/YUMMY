@@ -1,0 +1,72 @@
+{% load static %}
+
+<nav class="navbar bg-body-tertiary fixed-top navbar-dark bg-primary">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-start gap-3 align-items-center">
+            <button class="btn btn-warning" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+                    aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="#">
+                <img src="{% static 'img/Logo3.svg' %}" alt="Logo">
+            </a>
+        </div>
+        <div class="d-inline-flex justify-content-between gap-5">
+            <form class="d-flex search-form" role="search">
+                <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search">
+                <button class="btn btn-warning" type="submit"><strong>Поиск</strong></button>
+            </form>
+            <div class="d-flex flex-row justify-content-between gap-2">
+                <a class="btn btn-warning" href="#"><strong>Вход</strong></a>
+                <a class="btn btn-warning" href="#"><strong>Регистрация</strong></a>
+                <a class="btn btn-warning" href="#"><strong>Выход</strong></a>
+            </div>
+        </div>
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar"
+             aria-labelledby="offcanvasNavbarLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Меню</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="#">Домашняя страница</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Рецепты
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Выпечка</a></li>
+                            <li><a class="dropdown-item" href="#">Первые блюда</a></li>
+                            <li><a class="dropdown-item" href="#">Вторые блюда</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Кухни мира
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Японская кухня</a></li>
+                            <li><a class="dropdown-item" href="#">Европейская кухня</a></li>
+                            <li><a class="dropdown-item" href="#">Грузинская кухня</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="#">Ингредиенты</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="#">Блог</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="#">О нас</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

@@ -1,12 +1,12 @@
 from django.db import models
 from django.core.validators import MinLengthValidator
+from django.core.files.storage import FileSystemStorage
 from user.models import User
 from enumchoicefield import ChoiceEnum, EnumChoiceField
 from django.urls import reverse
 from transliterate import slugify
 
-
-# Create your models here.
+rs = FileSystemStorage(location='media/recipes')
 
 
 class CuisineType(ChoiceEnum):
@@ -30,7 +30,7 @@ class CuisineType(ChoiceEnum):
 
 class DepartmentType(ChoiceEnum):
     B = 'выпечка'
-    D = 'дессерты'
+    D = 'десерты'
     M = 'вторые блюда'
     S = 'закуски'
     SL = 'салаты'
@@ -68,7 +68,8 @@ class GoodsType(ChoiceEnum):
 
 class Goods(models.Model):
     name = models.CharField(max_length=50, unique=True, validators=[MinLengthValidator(3)],
-                            error_messages={'unique': 'Продукт с таким названием уже существует'}, verbose_name='Название продукта')
+                            error_messages={'unique': 'Продукт с таким названием уже существует'},
+                            verbose_name='Название продукта')
     type = EnumChoiceField(GoodsType, default=GoodsType.V, verbose_name='Тип продукта')
 
     def __str__(self):
@@ -87,13 +88,14 @@ class Recipe(models.Model):
     """A class for presenting a recipe"""
 
     name = models.CharField(max_length=100, validators=[MinLengthValidator(2)], verbose_name='Название')
+    image = models.ImageField(storage=rs, default='empty.png', verbose_name='Фотография')
     slug = models.SlugField(null=False, unique=True)
     date = models.DateTimeField(auto_now_add=True, verbose_name='Дата публикации')
-    time_in_hours = models.PositiveIntegerField(blank=True, null=True, verbose_name='Время приготовления(ч.)')
-    time_in_minutes = models.PositiveIntegerField(verbose_name='Время приготовления(мин.)')
+    time = models.PositiveIntegerField(default=0, verbose_name='Время приготовления')
     description = models.TextField(verbose_name='Приготовление')
     # author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, verbose_name='Автор')
-    ingredients = models.ManyToManyField(Goods, through='Ingredient', through_fields=['recipe', 'ingredient'], verbose_name='Ингредиент', blank=True)
+    ingredients = models.ManyToManyField(Goods, through='Ingredient', through_fields=['recipe', 'ingredient'],
+                                         verbose_name='Ингредиент', blank=True)
     cuisine = EnumChoiceField(CuisineType, default=CuisineType.EUR, blank=True)
     department = EnumChoiceField(DepartmentType, default=DepartmentType.M)
 
