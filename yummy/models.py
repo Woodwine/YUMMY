@@ -6,38 +6,36 @@ from enumchoicefield import ChoiceEnum, EnumChoiceField
 from django.urls import reverse
 from transliterate import slugify
 
-rs = FileSystemStorage(location='media/recipes')
-
 
 class CuisineType(ChoiceEnum):
-    RU = 'русская кухня'
-    FR = 'французская кухня'
-    GR = 'грузинская кухня'
-    IT = 'итальянская кухня'
-    JP = 'японская кухня'
-    IND = 'индийская кухня'
-    CHN = 'китайская кухня'
-    AS = 'азиатская кухня'
-    MX = 'мексиканская кухня'
-    EUR = 'европейская кухня'
-    KVZ = 'кавказская кухня'
-    UZ = 'узбекская кухня'
-    TR = 'турецкая кухня'
-    AMR = 'американская кухня'
-    SP = 'испанская кухня'
-    GRC = 'греческая кухня'
+    russia = 'Русская кухня'
+    france = 'Французская кухня'
+    georgia = 'Грузинская кухня'
+    italia = 'Итальянская кухня'
+    japan = 'Японская кухня'
+    india = 'Индийская кухня'
+    china = 'Китайская кухня'
+    asia = 'Азиатская кухня'
+    mexico = 'Мексиканская кухня'
+    europe = 'Европейская кухня'
+    caucasus = 'Кавказская кухня'
+    uzbekistan = 'Узбекская кухня'
+    turkey = 'Турецкая кухня'
+    america = 'Американская кухня'
+    spain = 'Испанская кухня'
+    greece = 'Греческая кухня'
 
 
 class DepartmentType(ChoiceEnum):
-    B = 'выпечка'
-    D = 'десерты'
-    M = 'вторые блюда'
-    S = 'закуски'
-    SL = 'салаты'
-    SP = 'первые блюда'
-    DR = 'напитки'
-    SS = 'соусы'
-    CAN = 'заготовки на зиму'
+    salads = 'Салаты'
+    soups = 'Первые блюда'
+    main_dishes = 'Вторые блюда'
+    snacks = 'Закуски'
+    bakery = 'Выпечка'
+    desserts = 'Десерты'
+    drinks = 'Напитки'
+    sauces = 'Соусы'
+    canned = 'Заготовки на зиму'
 
 
 class ProductQuantity(ChoiceEnum):
@@ -52,18 +50,18 @@ class ProductQuantity(ChoiceEnum):
 
 
 class GoodsType(ChoiceEnum):
-    M = 'мясо и птица'
-    F = 'рыба'
-    V = 'овощи'
-    EG = 'яйца'
-    FR = 'фрукты'
-    P = 'крупы'
-    SP = 'специи'
-    SS = 'соусы'
-    ML = 'молочные продукты'
-    B = 'выпечка'
-    D = 'напитки'
-    N = 'сухофрукты'
+    M = 'Мясо и птица'
+    F = 'Рыба'
+    V = 'Овощи'
+    EG = 'Яйца'
+    FR = 'Ягоды и фрукты'
+    P = 'Крупы'
+    SP = 'Специи'
+    SS = 'Соусы'
+    ML = 'Молочные продукты'
+    B = 'Ингредиенты для выпечки'
+    D = 'Напитки'
+    N = 'Сухофрукты'
 
 
 class Goods(models.Model):
@@ -88,7 +86,7 @@ class Recipe(models.Model):
     """A class for presenting a recipe"""
 
     name = models.CharField(max_length=100, validators=[MinLengthValidator(2)], verbose_name='Название')
-    image = models.ImageField(storage=rs, default='empty.png', verbose_name='Фотография')
+    image = models.ImageField(upload_to='recipes/', verbose_name='Фотография')
     slug = models.SlugField(null=False, unique=True)
     date = models.DateTimeField(auto_now_add=True, verbose_name='Дата публикации')
     time = models.PositiveIntegerField(default=0, verbose_name='Время приготовления')
@@ -96,14 +94,14 @@ class Recipe(models.Model):
     # author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, verbose_name='Автор')
     ingredients = models.ManyToManyField(Goods, through='Ingredient', through_fields=['recipe', 'ingredient'],
                                          verbose_name='Ингредиент', blank=True)
-    cuisine = EnumChoiceField(CuisineType, default=CuisineType.EUR, blank=True)
-    department = EnumChoiceField(DepartmentType, default=DepartmentType.M)
+    cuisine = EnumChoiceField(CuisineType, blank=True)
+    department = EnumChoiceField(DepartmentType, default=DepartmentType.soups)
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return f'recipes/{self.slug}'
+        return self.slug
 
     def save(self, *args, **kwargs):
         if not self.slug:

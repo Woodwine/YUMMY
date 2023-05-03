@@ -1,29 +1,27 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block add_css %}
+<link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
+{% endblock %}
 
-{% block title %}Добавить продукт{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <form action="" method="post">
+<form method="post">
+    <fieldset>
+        <legend>
+            <h3>Добавление нового продукта</h3>
+        </legend>
         {% csrf_token %}
         {% for field in form %}
-            <div class="form-style {% if field.errors %} errors {% endif %}">
-                {{ field.label_tag }}
-                {{ field.errors }}
-                {{ field }}
-            </div>
+        <div class="form-group">
+            <label class="col-form-label mt-4">{{ field.label_tag }}</label>
+            {{ field.errors }}
+            {{ field }}
+        </div>
         {% endfor %}
-        <button type="submit">Отправить</button>
-    </form>
-    <h3>
-        <a href="{% url 'home' %}">
-            Вернуться на главную страницу
-        </a>
-    </h3>
-    <h3>
-        <a href="{% url 'goods' %}">
-            Вернуться на страницу с ингредиентами
-        </a>
-    </h3>
-
-
+        <button type="submit" class="btn btn-primary">Добавить</button>
+    </fieldset>
+</form>
 {% endblock %}

@@ -1,23 +1,22 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block add_css %}
+<link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
+{% endblock %}
 
-{% block title %}Удалить продукт{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <form action="" method="post">
-        {% csrf_token %}
-        <p>Вы уверены что вы хотите удалить {{ object }}?</p>
-        <button type="submit" value="Confirm">Удалить</button>
-    </form>
-    <h3>
-        <a href="{% url 'home' %}">
-            Вернуться на главную страницу
-        </a>
-    </h3>
-    <h3>
-        <a href="{% url 'goods' %}">
-            Вернуться на страницу с ингредиентами
-        </a>
-    </h3>
-
+<div class="card delete-card">
+    <div class="card-body delete-card__body">
+        <form method="post">
+            {% csrf_token %}
+            <h4 class="card-title">Удаление</h4>
+            <p class="card-text">Вы уверены что вы хотите удалить продукт: {{ object }} ?</p>
+            <button type="submit" class="btn btn-outline-primary" value="Confirm"><b>Удалить</b></button>
+        </form>
+    </div>
+</div>
 
 {% endblock %}

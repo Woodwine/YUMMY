@@ -30,41 +30,32 @@
             </div>
             <div class="offcanvas-body">
                 <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="#">Домашняя страница</a>
-                    </li>
+                    {% for item in menu %}
+                    {% if item.dropdown %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle" href='#' role="button"
+                           data-bs-toggle="dropdown"
                            aria-expanded="false">
-                            Рецепты
+                            {{ item.menu_title }}
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Выпечка</a></li>
-                            <li><a class="dropdown-item" href="#">Первые блюда</a></li>
-                            <li><a class="dropdown-item" href="#">Вторые блюда</a></li>
+                            {% for drop_item in item.dropdown %}
+                            {% if drop_item.dep %}
+                            <li><a class="dropdown-item" href='{% url drop_item.m_url drop_item.dep %}'>{{ drop_item.name }}</a></li>
+                            {% elif drop_item.cntr %}
+                            <li><a class="dropdown-item" href='{% url drop_item.m_url drop_item.cntr %}'>{{ drop_item.name }}</a></li>
+                            {% else %}
+                            <li><a class="dropdown-item" href='{% url drop_item.m_url %}'>{{ drop_item.name }}</a></li>
+                            {% endif %}
+                            {% endfor %}
                         </ul>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                            Кухни мира
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Японская кухня</a></li>
-                            <li><a class="dropdown-item" href="#">Европейская кухня</a></li>
-                            <li><a class="dropdown-item" href="#">Грузинская кухня</a></li>
-                        </ul>
-                    </li>
-
+                    {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="#">Ингредиенты</a>
+                        <a class="nav-link" aria-current="page" href='{% url item.m_url %}'>{{ item.menu_title }}</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="#">Блог</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="#">О нас</a>
-                    </li>
+                    {% endif %}
+                    {% endfor %}
                 </ul>
             </div>
         </div>

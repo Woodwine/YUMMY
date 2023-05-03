@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block add_css %}
+<link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="recipe-list container">
+    <div class="recipe-list__wrapp">
+        <div class="recipes__title">
+            <h3>{{ title }}:</h3>
+        </div>
+    </div>
+    <div class="recipes__wrapp">
+        {% for recipe in recipes %}
+        <div class="recipe__wrapp" style="margin-bottom: 25px;">
+            <a href="{{ recipe.get_absolute_url }}">
+                <div class="card recipes__card" style="margin-bottom: 10px;">
+                    <img src="{{ recipe.image.url }}" class="card-img-top" alt="recipe">
+                    <div class="card-body">
+                        <h5 class="card-text">{{ recipe }}</h5>
+                    </div>
+                </div>
+            </a>
+            <div class="d-flex flex-row justify-content-around">
+                <a class="btn btn-primary btn-sm" href="{% url 'update_recipe' recipe.pk %}">Изменить рецепт</a>
+                <a class="btn btn-danger btn-sm" href="{% url 'delete_recipe' recipe.pk %}">Удалить</a>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+{% endblock %}

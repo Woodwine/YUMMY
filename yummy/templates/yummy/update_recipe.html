@@ -1,69 +1,71 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block add_css %}
+<link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
+{% endblock %}
 
 {% block title %}Изменить рецепт{% endblock %}
 
 {% block content %}
-<form action="" method="post">
-    {% csrf_token %}
-    {{ recipe_form.management_form }}
-    {{ recipe_form.non_form_erros }}
+<div class="form-container container">
 
-    {% for field in recipe_form %}
-    {% if field == 'image' %}
-    <div class="form-style">
-        <p>время приготовления(часов):
-            <input type="number" name="time_in_hours">
-        </p>
-        <p>время приготовления(минут):
-            <input type="number" name="time_in_minutes">
-        </p>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-dismissible alert-danger">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <strong>{{ message }}</strong>
     </div>
-    <div class="form-style {% if field.errors %} errors {% endif %}">
-        {{ field.errors }}
-        {{ field.label_tag }} {{ field }}
-    </div>
-    {% else %}
-    <div class="form-style {% if field.errors %} errors {% endif %}">
-        {{ field.errors }}
-        {{ field.label_tag }} {{ field }}
-    </div>
-    {% endif %}
     {% endfor %}
+    {% endif %}
 
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
 
-    <div>
-        <h3>Ингредиенты:</h3>
-        <div id="form-container">
-            {{ formset.management_form }}
-            {{ formset.non_form_erros }}
-            {% for form in formset %}
-            <div class="form-style {% if forms.errors %} errors {% endif %}">
-                <div class="ingredient-form">
-                    {{ form.errors }}
-                    {{ form }}
-                </div>
-            </div>
-            {% endfor %}
-            <button id="add-form" type="button">Добавить еще один ингредиент</button>
+        {{ recipe_form.management_form }}
+        {{ recipe_form.non_form_erros }}
+
+        {% for field in recipe_form %}
+        {% if field.image %}
+        <div class="form-group image__form-control">
+            <label class="col-form-label mt-1">{{ field.label_tag }}</label>
+            {{ field.errors }}
+            {{ field }}
         </div>
-    </div>
-    <button type="submit">Отправить</button>
-</form>
-<h3>
-    <a href="{% url 'delete_recipe' recipe_pk %}">
-        Удалить рецепт
-    </a>
-</h3>
-<h3>
-    <a href="{% url 'recipes' %}">
-        Вернуться на страницу с рецептами
-    </a>
-</h3>
-<h3>
-    <a href="{% url 'home' %}">
-        Вернуться на главную страницу
-    </a>
-</h3>
+        {% else %}
+        <div class="form-group">
+            <label class="col-form-label mt-1">{{ field.label_tag }}</label>
+            {{ field.errors }}
+            {{ field }}
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        <fieldset>
+            <label class="col-form-label mt-1">
+                <h3>Ингредиенты:</h3>
+            </label>
+            <div class="form-group" id="form-container">
+                {{ formset.management_form }}
+                {{ formset.non_form_erros }}
+                {% for form in formset %}
+                <div class="form-style">
+                    <div class="form-group ingredient-form">
+                        {{ form.errors }}
+                        {{ form.as_table }}
+                    </div>
+                </div>
+                {% endfor %}
+                <button class="btn btn-primary" id="add-form" type="button">Добавить еще один ингредиент</button>
+            </div>
+        </fieldset>
+        <button class="btn btn-primary" type="submit">Отправить</button>
+        <div style="margin-top: 18px;">
+            <a class="btn btn-danger" href="{% url 'delete_recipe' recipe_pk %}">Удалить рецепт</a>
+        </div>
+    </form>
+
+</div>
+
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"
         integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -83,6 +85,7 @@
             while (!res.done) {
                 console.log(res.value[1])
                 $('#id_ingredient_set-' + res.value[1] + '-ingredient').select2()
+
                 res = iter.next()
             }
 
@@ -107,6 +110,13 @@
 
             $('#id_ingredient_set-' + formNum + '-ingredient').select2();
         }
+
+
+
+
+
+
+
 
 </script>
 

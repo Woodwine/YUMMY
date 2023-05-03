@@ -1,47 +1,53 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block add_css %}
+<link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
+{% endblock %}
 
-{% block title %}{{ recipe }}{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <h3>
-        <a href="{% url 'home' %}">
-            Вернуться на главную страницу
-        </a>
-    </h3>
-    <h3>
-        <a href="{% url 'recipes' %}">
-            Вернуться на страницу с рецептами
-        </a>
-    </h3>
-    <h2>Название рецепта: {{ recipe.name }}</h2>
-    <ol>
-{#        <li>#}
-{#            {{ recipe.author }}#}
-{#        </li>#}
-        <li>
-            {{ recipe.date|date:'d.m.Y' }}
-        </li>
-        <li>{% if recipe.time // 60 != 0 %}
-            {{ recipe.time // 60 }} ч.
-            {{ recipe.time % 60 }} мин.
-            {% else %}
-            {{ recipe.time }} мин.
-            {% endif %}
-        </li>
-        <li>
-            {% for ingredient in ingredients %}
-                {{ ingredient.ingredient.name }}
-                {{ ingredient.quantity }} {{ ingredient.quantity_type }}
-            {% endfor %}
-        </li>
-        <li>
-            {{ recipe.description }}
-        </li>
-        <li>
-            {{ recipe.department }}
-        </li>
-        <li>
-            {{ recipe.cuisine }}
-        </li>
-    </ol>
+<h3>
+    <a href="{% url 'home' %}">
+        Вернуться на главную страницу
+    </a>
+</h3>
+<h3>
+    <a href="{% url 'recipes' %}">
+        Вернуться на страницу с рецептами
+    </a>
+</h3>
+<h2>Название рецепта: {{ recipe.name }}</h2>
+<img src="{{ recipe.image.url }}">
+<ul>
+<!--    <li>-->
+<!--        {{ recipe.author }}-->
+<!--    </li>-->
+    <li>
+        {{ recipe.date|date:'d.m.Y' }}
+    </li>
+    <li>
+    {% if time_in_hours %}
+        {{ time_in_hours }} ч.
+    {% endif %}
+    {% if time_in_minutes %}
+        {{ time_in_minutes }} мин.
+    {% endif %}
+    </li>
+    <li>
+        {% for ingredient in ingredients %}
+        {{ ingredient.ingredient.name }}
+        {{ ingredient.quantity }} {{ ingredient.quantity_type }}
+        {% endfor %}
+    </li>
+    <li>
+        {{ recipe.description }}
+    </li>
+    <li>
+        {{ recipe.department }}
+    </li>
+    <li>
+        {{ recipe.cuisine }}
+    </li>
+</ul>
 {% endblock %}

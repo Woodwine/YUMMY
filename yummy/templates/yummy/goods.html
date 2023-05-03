@@ -1,32 +1,49 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block add_css %}
+<link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
+{% endblock %}
 
-{% block title %}Продукты{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <h3>
-        <a href="{% url 'home' %}">
-            Вернуться на главную страницу
-        </a>
-    </h3>
-    <h3>
-        <a href="{% url 'goods' %}">
-            Вернуться на страницу с ингредиентами
-        </a>
-    </h3>
 
-    <div>
-        <a href="{% url 'add_product' %}">
-            Добавить продукт
-        </a>
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-dismissible alert-danger">
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <h3>{{ message }}</h3>
+</div>
+{% endfor %}
+{% endif %}
+
+<div class="content__goods container">
+    <div class="title__wrapp">
+        <div class="goods__title">
+            <h3>Продукты, используемые в рецептах:</h3>
+        </div>
+        <div class="goods__add_goods">
+            <a class="btn btn-warning" href="{% url 'add_product' %}"><b>Добавить продукт</b></a>
+        </div>
     </div>
-    <h2>Продукты</h2>
-    <ul>
-        {% for product in goods %}
+    <div class="goods__wrapp">
+        <ul class="color-with-marker">
+            {% for type, products in goods.items %}
             <li>
-                <a href="{{ product.get_url }}">
-                    {{ product }}
-                </a>
+                {{ type }}:
+                <ul class="color-with-marker">
+                    {% for item in products.values %}
+                    <li>
+                        <a href="{% url 'update_product' item.id %}">
+                            {{ item.name | capfirst }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
             </li>
-        {% endfor %}
-    </ul>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
 {% endblock %}

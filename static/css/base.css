@@ -43,6 +43,10 @@ body {
   box-shadow: 0 0;
 }
 
+.offcanvas-title {
+    color: var(--dark-green);
+}
+
 .nav-link {
     font-size: 19px;
     font-weight: 500;
@@ -61,8 +65,14 @@ body {
     font: bold;
 }
 
+.dropdown-menu {
+    --bs-dropdown-border-color: #ffffff;
+}
+
 .dropdown-item {
     font-size: 19px;
+    font-weight: 500;
+    font-family: Montserrat;
 }
 
 .dropdown-item:hover, .dropdown-item:focus {
@@ -86,7 +96,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 50px;
 }
 
 .footer-container {
@@ -132,3 +142,8 @@ body {
 .icons__item:last-child {
     margin-right: 0px;
 }
+
+.form-select option {
+    -webkit-appearance: none !important;
+     background-color: var(--yellow) !important;
+ }

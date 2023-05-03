@@ -1,22 +1,28 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block add_css %}
+<link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
+{% endblock %}
 
-{% block title %}Изменить продукт{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <form action="" method="post">
+<form method="post">
+    <fieldset>
+        <legend>
+            <h3>Редактировать продукт: {{ title }}</h3>
+        </legend>
         {% csrf_token %}
-        {{ form }}
-        <button type="submit" value="Update">Отправить</button>
-    </form>
-    <h3>
-        <a href="{% url 'home' %}">
-            Вернуться на главную страницу
-        </a>
-    </h3>
-    <h3>
-        <a href="{% url 'goods' %}">
-            Вернуться на страницу с ингредиентами
-        </a>
-    </h3>
-
+        {% for field in form %}
+        <div class="form-group">
+            <label class="col-form-label mt-4">{{ field.label_tag }}</label>
+            {{ field.errors }}
+            {{ field }}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary" value="Update" style="margin-right: 10px;">Изменить</button>
+        <a class="btn btn-danger" href="{% url 'delete_product' object.id %}">Удалить</a>
+    </fieldset>
+</form>
 {% endblock %}
