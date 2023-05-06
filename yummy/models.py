@@ -92,7 +92,7 @@ class Recipe(models.Model):
     time = models.PositiveIntegerField(default=0, verbose_name='Время приготовления')
     description = models.TextField(verbose_name='Приготовление')
     # author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, verbose_name='Автор')
-    ingredients = models.ManyToManyField(Goods, through='Ingredient', through_fields=['recipe', 'ingredient'],
+    ingredients = models.ManyToManyField(Goods, default='', through='Ingredient', through_fields=['recipe', 'ingredient'],
                                          verbose_name='Ингредиент', blank=True)
     cuisine = EnumChoiceField(CuisineType, blank=True)
     department = EnumChoiceField(DepartmentType, default=DepartmentType.soups)
@@ -101,7 +101,7 @@ class Recipe(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return self.slug
+        return reverse('recipe-details', args=[self.slug])
 
     def save(self, *args, **kwargs):
         if not self.slug:

@@ -28,6 +28,7 @@ class HomePageView(DataMixin, TemplateView):
         context['recipes'] = Recipe.objects.all()[:5]
         context['cuisines'] = {CuisineType[i]: CUISINE_INFO[i][0] for i in CuisineType._member_names_[:5]}
         context['departments'] = {DepartmentType[i]: DEP_INFO[i] for i in DepartmentType._member_names_[:5]}
+        print(context)
         return dict(list(context.items()) + list(c_def.items()))
 
 

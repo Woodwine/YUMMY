@@ -60,7 +60,8 @@ IngredientFormSet = inlineformset_factory(Recipe, Ingredient, form=AddIngredient
                                           widgets={
                                               'ingredient': forms.Select(choices=Goods.objects.all(),
                                                                          attrs={
-                                                                             'class': 'form-select'
+                                                                             'class': 'form-select',
+                                                                             'placeholder': 'Выберите ингредиент'
                                                                          }),
                                               'quantity': forms.NumberInput(attrs={'class': 'form-control',
                                                                                    'placeholder': 'Введите количество'}),

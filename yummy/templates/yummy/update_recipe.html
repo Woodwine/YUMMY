@@ -25,19 +25,11 @@
         {{ recipe_form.non_form_erros }}
 
         {% for field in recipe_form %}
-        {% if field.image %}
-        <div class="form-group image__form-control">
-            <label class="col-form-label mt-1">{{ field.label_tag }}</label>
-            {{ field.errors }}
-            {{ field }}
-        </div>
-        {% else %}
         <div class="form-group">
             <label class="col-form-label mt-1">{{ field.label_tag }}</label>
             {{ field.errors }}
             {{ field }}
         </div>
-        {% endif %}
         {% endfor %}
 
         <fieldset>
@@ -72,7 +64,8 @@
 
 <script>
         let ingredientForm = document.querySelectorAll(".ingredient-form")
-        let ingredientFormTemplate = document.querySelectorAll(".ingredient-form")[0].cloneNode(true)
+        let formNum = ingredientForm.length - 1
+        let ingredientFormTemplate = ingredientForm[formNum].cloneNode(true)
         let container = document.querySelector("#form-container")
         let addButton = document.querySelector("#add-form")
         let totalForms = document.querySelector("#id_ingredient_set-TOTAL_FORMS")
@@ -83,16 +76,17 @@
             let iter = container.innerHTML.matchAll(regex)
             let res = iter.next()
             while (!res.done) {
-                console.log(res.value[1])
-                $('#id_ingredient_set-' + res.value[1] + '-ingredient').select2()
-
+                $('#id_ingredient_set-' + res.value[1] + '-ingredient').select2({
+                theme: "bootstrap-5",
+                width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+                placeholder: 'Выберите ингредиент',
+                })
                 res = iter.next()
             }
 
         });
 
 
-        let formNum = ingredientForm.length - 1
         addButton.addEventListener('click', addForm)
 
         function addForm(e) {
@@ -108,14 +102,12 @@
             container.insertBefore(newForm, addButton)
             totalForms.setAttribute('value', `${formNum + 1}`)
 
-            $('#id_ingredient_set-' + formNum + '-ingredient').select2();
+            $('#id_ingredient_set-' + formNum + '-ingredient').select2({
+            theme: "bootstrap-5",
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: 'Выберите ингредиент',
+            });
         }
-
-
-
-
-
-
 
 
 </script>

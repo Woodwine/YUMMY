@@ -17,7 +17,7 @@
             <div class="card recipes__card">
                 <img src='{{ item.image.url }}' class="card-img-top" alt="recipe">
                 <div class="card-body">
-                    <h5 class="card-text">{{ item }}</h5>
+                    <h4 class="card-text">{{ item }}</h4>
                 </div>
             </div>
         </a>
@@ -36,7 +36,7 @@
     </div>
     <div class="recipes__wrapp">
         {% for cuisine, c_img in cuisines.items %}
-        <a href='#'>
+        <a href="{% url 'cus_recipes' cuisine.name %}">
             <div class="card recipes__card">
                 <img src={{ c_img }} class="card-img-top" alt="recipe">
                 <div class="card-body">
@@ -59,7 +59,7 @@
     </div>
     <div class="recipes__wrapp">
         {% for department, d_img in departments.items %}
-        <a href='#'>
+        <a href="{% url 'dep_recipes' department.name %}">
             <div class="card recipes__card">
                 <img src={{ d_img }} class="card-img-top" alt="recipe">
                 <div class="card-body">

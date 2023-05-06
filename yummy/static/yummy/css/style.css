@@ -132,7 +132,7 @@ legend h3 {
 }
 
 .form-group {
-    margin-bottom: 18px;
+    margin-bottom: 1rem;
     color: var(--dark-green);
     font-size: 18px;
 }
@@ -162,25 +162,26 @@ legend h3 {
 }
 
 .recipe__image-update {
-    width: 23rem;
-    height: 14rem;
+    width: 30rem;
+    height: 15.7rem;
+    object-fit: cover;
     border-radius: 0.4rem;
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
 }
 
 .col-form-label h3 {
     color: var(--dark-green);
-    margin-bottom: 10px;
+    margin-bottom: 0.7rem;
 }
 
 .ingredient-form {
-    margin-bottom: 30px;
+    margin-bottom: 2rem;
 }
 
 .ingredient-form label {
     display: block;
-    padding-top: 7px;
-    padding-bottom: 7px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
 }
 
 .my-class-select {
@@ -189,9 +190,9 @@ legend h3 {
 }
 
 .alert {
-    margin-top: 30px;
-    margin-bottom: 20px;
-    min-width: 35rem;
+    margin-top: 2rem;
+    margin-bottom: 1.3rem;
+    min-width: 2.3rem;
 }
 
 .alert h3 {
@@ -220,3 +221,85 @@ legend h3 {
     color: #888;
 }
 
+.one-recipe__container {
+    width: 70%;
+}
+
+.one-recipe__container h5, h2, h6, p {
+    color: var(--dark-green);
+}
+
+.one-recipe__top-wrapp{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.one-recipe__bottom-wrapp {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    margin-top: 2rem;
+    margin-bottom: 0.7rem;
+}
+
+.one-recipe__title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.one-recipe__title h2 {
+    font-family: 'Shantell Sans Regular', cursive;
+}
+
+.one-recipe__image {
+    width: 30rem;
+    height: 15.7rem;
+    margin: 20px 50px 20px 20px;
+    min-width: 30rem;
+}
+
+.one-recipe__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 0 0;
+    border-radius: 0.5rem;
+}
+
+.one-recipe__side-wrapp {
+    display: flex;
+    flex-direction: column;
+    align-items: space-between;
+    justify-content: center;
+}
+
+.one-recipe__info {
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.one-recipe__descr {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.one-recipe__descr p {
+    margin-left: 1rem;
+}
+
+.buttons-wrapp {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.buttons-wrapp .recipe-button {
+    margin-right: 1rem;
+}

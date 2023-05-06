@@ -7,47 +7,64 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<h3>
-    <a href="{% url 'home' %}">
-        Вернуться на главную страницу
-    </a>
-</h3>
-<h3>
-    <a href="{% url 'recipes' %}">
-        Вернуться на страницу с рецептами
-    </a>
-</h3>
-<h2>Название рецепта: {{ recipe.name }}</h2>
-<img src="{{ recipe.image.url }}">
-<ul>
-<!--    <li>-->
-<!--        {{ recipe.author }}-->
-<!--    </li>-->
-    <li>
-        {{ recipe.date|date:'d.m.Y' }}
-    </li>
-    <li>
-    {% if time_in_hours %}
-        {{ time_in_hours }} ч.
-    {% endif %}
-    {% if time_in_minutes %}
-        {{ time_in_minutes }} мин.
-    {% endif %}
-    </li>
-    <li>
-        {% for ingredient in ingredients %}
-        {{ ingredient.ingredient.name }}
-        {{ ingredient.quantity }} {{ ingredient.quantity_type }}
-        {% endfor %}
-    </li>
-    <li>
-        {{ recipe.description }}
-    </li>
-    <li>
-        {{ recipe.department }}
-    </li>
-    <li>
-        {{ recipe.cuisine }}
-    </li>
-</ul>
+<div class="one-recipe__container container">
+    <div class="one-recipe__top-wrapp">
+        <div class="one-recipe__image">
+            <img src="{{ recipe.image.url }}" alt="{{ recipe.name }}">
+        </div>
+        <div class="one-recipe__title">
+            <h2>{{ recipe.name }}</h2>
+        </div>
+    </div>
+    <div class="one-recipe__bottom-wrapp">
+        <div class="one-recipe__side-wrapp">
+            <div class="one-recipe__info">
+                <h5><b>Ингредиенты:</b></h5>
+                <ol>
+                    {% for ingredient in ingredients %}
+                    <li>
+                        {{ ingredient.ingredient.name | capfirst }} - {{ ingredient.quantity }} {{ ingredient.quantity_type }}
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+            <div class="one-recipe__info">
+                <h6><b>Тип блюда:</b></h6>
+                {{ recipe.department }}
+            </div>
+            {% if recipe.cuisine %}
+            <div class="one-recipe__info">
+                <h6><b>Кухня:</b></h6>
+                {{ recipe.cuisine }}
+            </div>
+            {% endif %}
+            <div class="one-recipe__info">
+                <h6><b>Время приготовления:</b></h6>
+                    {% if time_in_hours %}
+                    {{ time_in_hours }} ч.
+                    {% endif %}
+                    {% if time_in_minutes %}
+                    {{ time_in_minutes }} мин.
+                    {% endif %}
+            </div>
+            <div class="one-recipe__info">
+                <h6><b>Автор рецепта:</b></h6>
+                <!--            {{ recipe.author }}-->
+            </div>
+            <div class="one-recipe__info">
+                <h6><b>Дата добавления:</b></h6>
+                {{ recipe.date|date:'d.m.Y' }}
+            </div>
+            <div class="buttons-wrapp">
+                <a class="btn btn-primary recipe-button" href="{% url 'update_recipe' recipe.pk %}">Изменить
+                    рецепт</a>
+                <a class="btn btn-danger" href="{% url 'delete_recipe' recipe.pk %}">Удалить</a>
+            </div>
+        </div>
+        <div class="one-recipe__descr">
+            <h5><b>Описание приготовления:</b></h5>
+            <p>{{ recipe.description }}</p>
+        </div>
+    </div>
+</div>
 {% endblock %}
