@@ -71,6 +71,7 @@ MENU = [
     {'menu_title': 'Домашняя страница', 'm_url': "home"},
     {'menu_title': 'Рецепты', 'dropdown': [
         {'name': 'Все рецепты', 'm_url': 'recipes'},
+        {'name': 'Виды блюд', 'm_url': 'departments'},
         {'name': 'Салаты', 'm_url': 'dep_recipes', 'dep': 'salads'},
         {'name': 'Первые блюда', 'm_url': 'dep_recipes', 'dep': 'soups'},
         {'name': 'Вторые блюда', 'm_url': 'dep_recipes', 'dep': 'main_dishes'},

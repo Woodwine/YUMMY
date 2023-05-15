@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block add_css %}
+<link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
+{% endblock %}
+
+{% block title %}Изменить профиль{% endblock %}
+
+{% block content %}
+
+<div class="form-container container">
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-dismissible alert-danger">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <strong>{{ message }}</strong>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <hr>
+    <div class="form-title">
+        <h3><strong>Изменение профиля</strong></h3>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {{ user_form.management_form }}
+        {{ user_form.non_form_errors }}
+
+        {% for field in user_form %}
+        <div class="form-group">
+            <label class="col-form-label mt-1">{{ field.label_tag }}</label>
+            {{ field }}
+            {{ field.errors }}
+        </div>
+        {% endfor %}
+
+        {{ profile_form.management_form }}
+        {{ profile_form.non_form_errors }}
+        {% for field in profile_form %}
+        <div class="form-group">
+            <label class="col-form-label mt-1">{{ field.label_tag }}</label>
+            {{ field }}
+            {{ field.errors }}
+        </div>
+        {% endfor %}
+
+        <button class="btn btn-primary" type="submit">Обновить</button>
+    </form>
+</div>
+
+{% endblock %}

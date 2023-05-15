@@ -14,12 +14,21 @@
         <div class="d-inline-flex justify-content-between gap-5">
             <form class="d-flex search-form" role="search">
                 <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search">
-                <button class="btn btn-warning" type="submit"><strong>Поиск</strong></button>
+                <button class="btn btn-warning" type="submit">Поиск</button>
             </form>
             <div class="d-flex flex-row justify-content-between gap-2">
-                <a class="btn btn-warning" href="#"><strong>Вход</strong></a>
-                <a class="btn btn-warning" href="#"><strong>Регистрация</strong></a>
-                <a class="btn btn-warning" href="#"><strong>Выход</strong></a>
+                {% if request.user.is_authenticated %}
+                <div class="user__wrapp">
+                    <a href="{% url 'profile' %}">
+                    <img src="{{ user.profile.photo.url }}" alt="{{ user.username }}">
+                    </a>
+                </div>
+                <a class="btn btn-warning" href="{% url 'add_recipe' %}?next={{ request.path }}">Добавить рецепт</a>
+                <a class="btn btn-warning" href="{% url 'logout' %}">Выход</a>
+                {% else %}
+                <a class="btn btn-warning" href="{% url 'login' %}">Вход</a>
+                <a class="btn btn-warning" href="{% url 'register' %}">Регистрация</a>
+                {% endif %}
             </div>
         </div>
         <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar"
@@ -41,9 +50,17 @@
                         <ul class="dropdown-menu">
                             {% for drop_item in item.dropdown %}
                             {% if drop_item.dep %}
-                            <li><a class="dropdown-item" href='{% url drop_item.m_url drop_item.dep %}'>{{ drop_item.name }}</a></li>
+                            <li>
+                                <a class="dropdown-item" href='{% url drop_item.m_url drop_item.dep %}'>
+                                    {{ drop_item.name }}
+                                </a>
+                            </li>
                             {% elif drop_item.cntr %}
-                            <li><a class="dropdown-item" href='{% url drop_item.m_url drop_item.cntr %}'>{{ drop_item.name }}</a></li>
+                            <li>
+                                <a class="dropdown-item" href='{% url drop_item.m_url drop_item.cntr %}'>
+                                    {{ drop_item.name }}
+                                </a>
+                            </li>
                             {% else %}
                             <li><a class="dropdown-item" href='{% url drop_item.m_url %}'>{{ drop_item.name }}</a></li>
                             {% endif %}

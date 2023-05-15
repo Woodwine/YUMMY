@@ -1,4 +1,4 @@
-from django.contrib import admin, messages
+from django.contrib import admin
 from .models import Ingredient, Recipe, Goods
 
 # Register your models here.

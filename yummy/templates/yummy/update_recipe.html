@@ -9,26 +9,22 @@
 {% block content %}
 <div class="form-container container">
 
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-dismissible alert-danger">
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        <strong>{{ message }}</strong>
+    <hr>
+    <div class="form-title">
+        <h3><strong>Изменение рецепта</strong></h3>
     </div>
-    {% endfor %}
-    {% endif %}
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
         {{ recipe_form.management_form }}
-        {{ recipe_form.non_form_erros }}
+        {{ recipe_form.non_form_errors }}
 
         {% for field in recipe_form %}
         <div class="form-group">
             <label class="col-form-label mt-1">{{ field.label_tag }}</label>
-            {{ field.errors }}
             {{ field }}
+            {{ field.errors }}
         </div>
         {% endfor %}
 
@@ -38,7 +34,7 @@
             </label>
             <div class="form-group" id="form-container">
                 {{ formset.management_form }}
-                {{ formset.non_form_erros }}
+                {{ formset.non_form_errors }}
                 {% for form in formset %}
                 <div class="form-style">
                     <div class="form-group ingredient-form">
@@ -52,7 +48,7 @@
         </fieldset>
         <button class="btn btn-primary" type="submit">Отправить</button>
         <div style="margin-top: 18px;">
-            <a class="btn btn-danger" href="{% url 'delete_recipe' recipe_pk %}">Удалить рецепт</a>
+            <a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal" href='#'>Удалить рецепт</a>
         </div>
     </form>
 

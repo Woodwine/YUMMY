@@ -1,10 +1,12 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.core.validators import MinLengthValidator
 from django.core.files.storage import FileSystemStorage
-from user.models import User
 from enumchoicefield import ChoiceEnum, EnumChoiceField
 from django.urls import reverse
 from transliterate import slugify
+
+from user.models import Profile
 
 
 class CuisineType(ChoiceEnum):
@@ -55,13 +57,13 @@ class GoodsType(ChoiceEnum):
     V = 'Овощи'
     EG = 'Яйца'
     FR = 'Ягоды и фрукты'
-    P = 'Крупы'
+    P = 'Крупы и макароны'
     SP = 'Специи'
     SS = 'Соусы'
     ML = 'Молочные продукты'
-    B = 'Ингредиенты для выпечки'
+    B = 'Мука и ингредиенты для выпечки'
     D = 'Напитки'
-    N = 'Сухофрукты'
+    N = 'Орехи и сухофрукты'
 
 
 class Goods(models.Model):
@@ -79,7 +81,7 @@ class Goods(models.Model):
     class Meta:
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
-        ordering = ['type']
+        ordering = ('type',)
 
 
 class Recipe(models.Model):
@@ -91,11 +93,12 @@ class Recipe(models.Model):
     date = models.DateTimeField(auto_now_add=True, verbose_name='Дата публикации')
     time = models.PositiveIntegerField(default=0, verbose_name='Время приготовления')
     description = models.TextField(verbose_name='Приготовление')
-    # author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, verbose_name='Автор')
+    author = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Автор')
     ingredients = models.ManyToManyField(Goods, default='', through='Ingredient', through_fields=['recipe', 'ingredient'],
-                                         verbose_name='Ингредиент', blank=True)
-    cuisine = EnumChoiceField(CuisineType, blank=True)
-    department = EnumChoiceField(DepartmentType, default=DepartmentType.soups)
+                                         verbose_name='Ингредиент')
+    cuisine = EnumChoiceField(CuisineType, blank=True, verbose_name='Кухня')
+    department = EnumChoiceField(DepartmentType, default=DepartmentType.soups, verbose_name='Тип блюда')
+    liked_by = models.ManyToManyField(Profile, related_name='liked_recipes')
 
     def __str__(self):
         return self.name
@@ -111,15 +114,15 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
-        ordering = ['date', 'name']
+        ordering = ('date', 'name')
 
 
 class Ingredient(models.Model):
     """A class for presenting an ingredient"""
 
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    ingredient = models.ForeignKey(Goods, on_delete=models.CASCADE, verbose_name='Ингредиент')
-    quantity = models.PositiveIntegerField(default=1, blank=True, verbose_name='Количество')
+    ingredient = models.ForeignKey(Goods, on_delete=models.PROTECT, verbose_name='Ингредиент')
+    quantity = models.PositiveIntegerField(default=1, verbose_name='Количество')
     quantity_type = EnumChoiceField(ProductQuantity, default=ProductQuantity.GR, verbose_name='Единицы измерения')
 
     def __str__(self):
@@ -128,4 +131,25 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
-        ordering = ['ingredient']
+        ordering = ('ingredient', )
+
+
+class Comments(models.Model):
+    RATING_CHOICES = [
+        ('1', 1),
+        ('2', 2),
+        ('3', 3),
+        ('4', 4),
+        ('5', 5),
+    ]
+
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
+    rating = models.IntegerField(choices=RATING_CHOICES, default=0, blank=True, null=True)
+    comment_author = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name='Автор комментария')
+    comment = models.TextField(verbose_name='Комментарий')
+    date = models.DateTimeField(auto_now_add=True, verbose_name='Дата публикации')
+
+    class Meta:
+        unique_together = ('recipe', 'comment_author')
+
+

@@ -7,10 +7,14 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+
 <div class="recipe-list container">
-    <div class="recipe-list__wrapp">
-        <div class="recipes__title">
-            <h3>{{ title }}:</h3>
+    <div class="list-title">
+        <hr>
+        <div class="recipe-list__wrapp">
+            <div class="recipes__title">
+                <h3><strong>{{ title }}:</strong></h3>
+            </div>
         </div>
     </div>
     <div class="recipes__wrapp">
@@ -24,13 +28,56 @@
                     </div>
                 </div>
             </a>
+            {% if request.user.is_authenticated and request.user.profile == recipe.author or request.user.is_staff %}
             <div class="d-flex flex-row justify-content-around">
-                <a class="btn btn-primary btn-sm" href="{% url 'update_recipe' recipe.pk %}">Изменить рецепт</a>
-                <a class="btn btn-danger btn-sm" href="{% url 'delete_recipe' recipe.pk %}">Удалить</a>
+                <a class="btn btn-primary btn-sm" href="{% url 'update_recipe' recipe.pk %}?next={{ request.path }}">
+                    Изменить рецепт
+                </a>
             </div>
+            {% endif %}
         </div>
         {% endfor %}
 
     </div>
 </div>
+
+{% if is_paginated %}
+<div class="pagination">
+    <ul class="pagination">
+
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1">&laquo;</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="?page=1">&laquo;</a>
+        </li>
+        {% endif %}
+
+        {% for i in page_obj.paginator.page_range %}
+        {% if page_obj.number == i %}
+        <li class="page-item active">
+            <a class="page-link" href="#">{{ i }}</a>
+        </li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+        </li>
+        {% else %}
+            <li class="page-item disabled" >
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+
 {% endblock %}

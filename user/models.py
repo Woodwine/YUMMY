@@ -1,14 +1,16 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.core.validators import MinLengthValidator
 
 # Create your models here.
 
 
-class User(models.Model):
-    name = models.CharField(max_length=20, validators=[MinLengthValidator(3)])
-    surname = models.CharField(max_length=40, validators=[MinLengthValidator(3)])
-    email = models.EmailField()
+class Profile(models.Model):
+    user = models.OneToOneField(User, verbose_name='Пользователь', on_delete=models.CASCADE)
+    date_of_birth = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
+    photo = models.ImageField(upload_to='users/', default='users/Default_User.svg', verbose_name='Фотография профиля')
 
     def __str__(self):
-        return f'{self.name} {self.surname}'
+        return self.user.username
+
 

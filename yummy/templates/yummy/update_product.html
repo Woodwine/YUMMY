@@ -10,10 +10,15 @@
 {% block content %}
 <form method="post">
     <fieldset>
-        <legend>
+        <div class="recipes__title">
+            <hr>
             <h3>Редактировать продукт: {{ title }}</h3>
-        </legend>
+        </div>
         {% csrf_token %}
+
+        {{ form.management_form }}
+        {{ form.non_form_errors }}
+
         {% for field in form %}
         <div class="form-group">
             <label class="col-form-label mt-4">{{ field.label_tag }}</label>
@@ -22,7 +27,7 @@
         </div>
         {% endfor %}
         <button type="submit" class="btn btn-primary" value="Update" style="margin-right: 10px;">Изменить</button>
-        <a class="btn btn-danger" href="{% url 'delete_product' object.id %}">Удалить</a>
+        <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal" href='#'>Удалить</a>
     </fieldset>
 </form>
 {% endblock %}

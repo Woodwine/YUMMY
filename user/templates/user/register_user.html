@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block add_css %}
+<link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="form-container container">
+    <hr>
+    <div class="form-title">
+        <h3>{{ title }}</h3>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form.management_form }}
+        {{ form.non_form_errors }}
+
+        {% for field in form %}
+        <div class="form-group">
+            <label class="col-form-label mt-1">{{ field.label_tag }}</label>
+            {{ field.errors }}
+            {{ field }}
+        </div>
+        {% endfor %}
+            <button class="btn btn-primary" type="submit" style="margin-top: 18px;">Регистрация</button>
+    </form>
+</div>
+
+{% endblock %}

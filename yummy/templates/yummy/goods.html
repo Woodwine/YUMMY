@@ -9,41 +9,53 @@
 
 {% block content %}
 
-{% if messages %}
-{% for message in messages %}
-<div class="alert alert-dismissible alert-danger">
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    <h3>{{ message }}</h3>
-</div>
-{% endfor %}
-{% endif %}
-
 <div class="content__goods container">
-    <div class="title__wrapp">
-        <div class="goods__title">
-            <h3>Продукты, используемые в рецептах:</h3>
-        </div>
-        <div class="goods__add_goods">
-            <a class="btn btn-warning" href="{% url 'add_product' %}"><b>Добавить продукт</b></a>
+    <div class="goods-title">
+        <hr>
+        <div class="title__wrapp">
+            <div class="goods__title">
+                <h3><strong>Продукты, используемые в рецептах:</strong></h3>
+            </div>
+            {% if request.user.is_staff %}
+            <div class="goods__add_goods">
+                <a class="btn btn-warning" href="{% url 'add_product' %}">Добавить продукт</a>
+            </div>
+            {% endif %}
         </div>
     </div>
     <div class="goods__wrapp">
-        <ul class="color-with-marker">
+        <div class="accordion" id="accordionExample">
             {% for type, products in goods.items %}
-            <li>
-                {{ type }}:
-                <ul class="color-with-marker">
-                    {% for item in products.values %}
-                    <li>
-                        <a href="{% url 'update_product' item.id %}">
-                            {{ item.name | capfirst }}
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </li>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="{{ type.value | cut:' ' }}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapse{{ type.value | cut:' ' }}" aria-expanded="false"
+                            aria-controls="collapse{{ type.value | cut:' ' }}">
+                        {{ type }}
+                    </button>
+                </h2>
+                <div id="collapse{{ type.value | cut:' ' }}" class="accordion-collapse collapse"
+                     aria-labelledby="{{ type.value | cut:' ' }}"
+                     data-bs-parent="#accordionExample" style="">
+                    <div class="accordion-body">
+                        <ul>
+                            {% for item in products.values %}
+                            <li>
+                                {% if request.user.is_staff %}
+                                <a href="{% url 'update_product' item.id %}">
+                                    {{ item.name | capfirst }}
+                                </a>
+                                {% else %}
+                                    {{ item.name | capfirst }}
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
 </div>
 {% endblock %}

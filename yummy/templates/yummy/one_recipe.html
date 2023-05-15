@@ -7,13 +7,14 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+<hr>
 <div class="one-recipe__container container">
     <div class="one-recipe__top-wrapp">
         <div class="one-recipe__image">
             <img src="{{ recipe.image.url }}" alt="{{ recipe.name }}">
         </div>
         <div class="one-recipe__title">
-            <h2>{{ recipe.name }}</h2>
+            <h2>{{ recipe.name | capfirst }}</h2>
         </div>
     </div>
     <div class="one-recipe__bottom-wrapp">
@@ -23,7 +24,8 @@
                 <ol>
                     {% for ingredient in ingredients %}
                     <li>
-                        {{ ingredient.ingredient.name | capfirst }} - {{ ingredient.quantity }} {{ ingredient.quantity_type }}
+                        {{ ingredient.ingredient.name | capfirst }} - {{ ingredient.quantity }}
+                        {{ ingredient.quantity_type }}
                     </li>
                     {% endfor %}
                 </ol>
@@ -40,26 +42,30 @@
             {% endif %}
             <div class="one-recipe__info">
                 <h6><b>Время приготовления:</b></h6>
-                    {% if time_in_hours %}
-                    {{ time_in_hours }} ч.
-                    {% endif %}
-                    {% if time_in_minutes %}
-                    {{ time_in_minutes }} мин.
-                    {% endif %}
+                {% if time_in_hours %}
+                {{ time_in_hours }} ч.
+                {% endif %}
+                {% if time_in_minutes %}
+                {{ time_in_minutes }} мин.
+                {% endif %}
             </div>
             <div class="one-recipe__info">
                 <h6><b>Автор рецепта:</b></h6>
-                <!--            {{ recipe.author }}-->
+                {{ recipe.author }}
             </div>
             <div class="one-recipe__info">
                 <h6><b>Дата добавления:</b></h6>
                 {{ recipe.date|date:'d.m.Y' }}
             </div>
+            {% if request.user.is_authenticated and request.user.profile == recipe.author or request.user.is_staff %}
             <div class="buttons-wrapp">
-                <a class="btn btn-primary recipe-button" href="{% url 'update_recipe' recipe.pk %}">Изменить
-                    рецепт</a>
-                <a class="btn btn-danger" href="{% url 'delete_recipe' recipe.pk %}">Удалить</a>
+                <a class="btn btn-primary recipe-button" href="{% url 'update_recipe' recipe.pk %}?next={{ request.path }}">
+                    Изменить рецепт</a>
+                <a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal" href='#'>
+                    Удалить
+                </a>
             </div>
+            {% endif %}
         </div>
         <div class="one-recipe__descr">
             <h5><b>Описание приготовления:</b></h5>

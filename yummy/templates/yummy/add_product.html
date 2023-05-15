@@ -8,12 +8,17 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+
+<hr>
 <form method="post">
     <fieldset>
         <legend>
             <h3>Добавление нового продукта</h3>
         </legend>
         {% csrf_token %}
+        {{ form.management_form }}
+        {{ form.non_form_errors }}
+
         {% for field in form %}
         <div class="form-group">
             <label class="col-form-label mt-4">{{ field.label_tag }}</label>

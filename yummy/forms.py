@@ -41,7 +41,7 @@ class AddProduct(forms.ModelForm):
 class AddIngredient(forms.ModelForm):
     class Meta:
         model = Ingredient
-        fields = ['ingredient', 'quantity', 'quantity_type']
+        fields = ('ingredient', 'quantity', 'quantity_type')
         labels = {
             'ingredient': 'Ингредиент',
             'quantity': 'Количество',
@@ -74,13 +74,13 @@ IngredientFormSet = inlineformset_factory(Recipe, Ingredient, form=AddIngredient
 
 
 class AddRecipe(forms.ModelForm):
-    time_in_hours = forms.IntegerField(required=False, label='Время приготовления (часов)',
+    time_in_hours = forms.IntegerField(initial=0, required=False, label='Время приготовления (часов)',
                                        widget=forms.NumberInput(attrs={
                                            'class': 'form-control',
                                            'placeholder': 'Время (часов)'
                                        }))
-    time_in_minutes = forms.IntegerField(required=True, error_messages={
-                                                        'required': 'Поле не может быть пустым'},
+    time_in_minutes = forms.IntegerField(initial=0, required=False, error_messages={
+        'required': 'Поле не может быть пустым'},
                                          label='Время приготовления (минут)',
                                          widget=forms.NumberInput(attrs={
                                              'class': 'form-control',
@@ -89,7 +89,7 @@ class AddRecipe(forms.ModelForm):
 
     class Meta:
         model = Recipe
-        fields = ['name', 'image', 'description', 'cuisine', 'department']
+        fields = ('name', 'image', 'description', 'cuisine', 'department')
         labels = {
             'name': 'Название рецепта',
             'image': 'Фотография блюда',
@@ -132,3 +132,4 @@ class AddRecipe(forms.ModelForm):
                                            'id': 'exampleSelect3',
                                        })
         }
+

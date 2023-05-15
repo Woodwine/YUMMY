@@ -8,9 +8,11 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+<hr>
 <div class="content__cuisines container">
     <div class="recipes__title">
-        <h3>Виды блюд</h3>
+        <hr>
+        <h3><strong>{{ title }}</strong></h3>
     </div>
     <div class="recipes__wrapp">
         {% for dep, img in all_departments.items %}

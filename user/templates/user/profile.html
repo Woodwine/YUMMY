@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block add_css %}
+<link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="profile__container">
+        <hr>
+        <ul class="nav nav-pills" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" data-bs-toggle="tab" href="#profile" aria-selected="false"
+                   role="tab">Профиль</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" data-bs-toggle="tab" href="#my_recipes" aria-selected="true" role="tab">Мои
+                    рецепты</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" data-bs-toggle="tab" href="#my_favourites" aria-selected="true" role="tab">Сохраненные
+                    рецепты</a>
+            </li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade active show" id="profile" role="tabpanel">
+                <div class="profile__wrapp">
+                    <div class="profile__header">
+                        <div class="wrapp__left-side">
+                            <img class="profile__image" src="{{ user.profile.photo.url }}" alt="{{ user.username }}">
+                            <a class="btn btn-primary recipe-button" href="{% url 'edit_profile' %}">Изменить
+                                профиль</a>
+                        </div>
+                        <div class="wrapp__right-side">
+                            <div class="profile__info">
+                                <h2><strong>{{ user.username }}</strong></h2>
+                            </div>
+                            {% if user.profile.date_of_birth %}
+                            <div class="profile__info">
+                                <h6><b>Дата рождения:</b></h6>
+                                {{ user.profile.date_of_birth }}
+                            </div>
+                            {% endif %}
+                            <div class="profile__info">
+                                <h6><b>Email:</b></h6>
+                                {{ user.email }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="my_recipes" role="tabpanel">
+
+                <div class="my-recipes__wrapp">
+                    {% for recipe in my_recipes %}
+                    <div class="recipe__wrapp" style="margin-bottom: 25px;">
+                        <a href="{{ recipe.get_absolute_url }}">
+                            <div class="card recipes__card" style="margin-bottom: 10px;">
+                                <img src='{{ recipe.image.url }}' class="card-img-top" alt="recipe">
+                                <div class="card-body">
+                                    <h5 class="card-text">{{ recipe }}</h5>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="d-flex flex-row justify-content-around">
+                            <a class="btn btn-primary btn-sm"
+                               href="{% url 'update_recipe' recipe.pk %}?next={{ request.path }}">
+                                Изменить рецепт
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!--            <div class="tab-pane fade" id="my_favourites" role="tabpanel">-->
+            <!--                <div class="recipes__wrapp">-->
+            <!--                    {% for recipe in my_favourites %}-->
+            <!--                    <div class="recipe__wrapp" style="margin-bottom: 25px;">-->
+            <!--                        <a href="{{ recipe.get_absolute_url }}">-->
+            <!--                            <div class="card recipes__card" style="margin-bottom: 10px;">-->
+            <!--                                <img src='{{ recipe.image.url }}' class="card-img-top" alt="recipe">-->
+            <!--                                <div class="card-body">-->
+            <!--                                    <h5 class="card-text">{{ recipe }}</h5>-->
+            <!--                                </div>-->
+            <!--                            </div>-->
+            <!--                        </a>-->
+            <!--                    </div>-->
+            <!--                    {% endfor %}-->
+            <!--                </div>-->
+            <!--            </div>-->
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
