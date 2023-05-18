@@ -2,14 +2,14 @@ from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Value, F
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic.base import View
 from django.views.generic import DetailView, ListView
-from .models import Recipe, Ingredient, Goods, CuisineType, DepartmentType, GoodsType, ProductQuantity
-from .forms import AddProduct, AddRecipe, AddIngredient, IngredientFormSet
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, DeletionMixin
+from .models import Recipe, Ingredient, Goods, CuisineType, DepartmentType, GoodsType, ProductQuantity, Comments
+from .forms import AddProduct, AddRecipe, AddIngredient, IngredientFormSet, AddComment
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, DeletionMixin, FormMixin
 from django.views.generic.base import TemplateView
 from django.contrib import messages
 from django.db import transaction
@@ -161,15 +161,38 @@ class OneRecipeView(DataMixin, DeletionMixin, SuccessMessageMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        time_in_hours = context['object'].time // 60
-        time_in_minutes = context['object'].time % 60
+        time_in_hours = self.object.time // 60
+        time_in_minutes = self.object.time % 60
         if time_in_hours != 0:
             context['time_in_hours'] = time_in_hours
         if time_in_minutes != 0:
             context['time_in_minutes'] = time_in_minutes
-        context['ingredients'] = Ingredient.objects.filter(recipe=context['object'].id)
-        c_def = self.get_user_context(title=context['object'])
+        context['ingredients'] = Ingredient.objects.filter(recipe=self.object.id)
+        comments = Comments.objects.filter(recipe=self.object.id)
+        if (len(comments) > 0 and comments.get(comment_author=self.request.user.profile) is None) or len(comments) == 0:
+            context['comment_form'] = AddComment
+
+        context['comments'] = comments
+        c_def = self.get_user_context(title=self.object)
         return dict(list(context.items()) + list(c_def.items()))
+
+    def post(self, request, *args, **kwargs):
+        comment_form = AddComment(request.POST)
+        path = request.META.get('HTTP_REFERER', '/')
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.recipe = self.get_object()
+            comment.comment_author = request.user.profile
+            comment.save()
+            self.object = self.get_object()
+            context = super(OneRecipeView, self).get_context_data(**kwargs)
+            context['comments'] = Comments.objects.filter(recipe=self.object.id)
+            return redirect(path, context=context)
+        else:
+            self.object = self.get_object()
+            context = super(OneRecipeView, self).get_context_data(**kwargs)
+            context['comments'] = Comments.objects.filter(recipe=self.object.id)
+            return self.render_to_response(context=context)
 
 
 def add_recipe(request):

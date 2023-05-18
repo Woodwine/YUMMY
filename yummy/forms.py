@@ -1,7 +1,7 @@
 from django import forms
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.forms import inlineformset_factory
-from .models import Goods, Recipe, Ingredient, GoodsType, CuisineType, DepartmentType, ProductQuantity
+from .models import Goods, Recipe, Ingredient, GoodsType, CuisineType, DepartmentType, ProductQuantity, Comments
 
 
 class RecipeImageInput(forms.ClearableFileInput):
@@ -133,3 +133,20 @@ class AddRecipe(forms.ModelForm):
                                        })
         }
 
+
+class AddComment(forms.ModelForm):
+
+    class Meta:
+        model = Comments
+        fields = ('rating', 'comment', )
+        labels = {
+            'rating': 'Рейтинг',
+            'comment': 'Комментарий'
+        }
+        widgets = {
+            'rating': forms.RadioSelect(),
+            'comment': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Оставьте комментарий к рецепту'
+            })
+        }

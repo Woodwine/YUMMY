@@ -59,7 +59,8 @@
             </div>
             {% if request.user.is_authenticated and request.user.profile == recipe.author or request.user.is_staff %}
             <div class="buttons-wrapp">
-                <a class="btn btn-primary recipe-button" href="{% url 'update_recipe' recipe.pk %}?next={{ request.path }}">
+                <a class="btn btn-primary recipe-button"
+                   href="{% url 'update_recipe' recipe.pk %}?next={{ request.path }}">
                     Изменить рецепт</a>
                 <a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal" href='#'>
                     Удалить
@@ -72,5 +73,35 @@
             <p>{{ recipe.description }}</p>
         </div>
     </div>
+    {% if request.user.is_authenticated and req%}
+    {% if comment_form %}
+    <form id='add_form' method="post">
+        {% csrf_token %}
+
+        {{ comment_form.management_form }}
+        {{ comment_form.non_form_errors }}
+        {% for field in comment_form %}
+        <div class="form-group">
+            <label class="col-form-label mt-1">{{ field.label_tag }}</label>
+            {{ field }}
+            {{ field.errors }}
+        </div>
+        {% endfor %}
+        <button class="btn btn-primary" type="submit">Отправить</button>
+    </form>
+    {% endif %}
+    {% endif %}
+    {% for comment in comments %}
+    <div class="comment__info">
+        <div class="comment__title">
+            <img src="{{ comment.comment_author.photo.url }}" alt="{{ comment.comment_author }}">
+            <h6><strong>{{ comment.comment_author }}</strong>  {{ comment.date }}:</h6>
+        </div>
+        <p>{{ comment.rating }}</p>
+        <p>{{ comment.comment }}</p>
+    </div>
+    {% endfor %}
 </div>
+
+
 {% endblock %}

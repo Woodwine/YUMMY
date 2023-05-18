@@ -461,6 +461,53 @@ legend h3 {
     font-size: 22px;
 }
 
+.comment__title {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.comment__title img, h6 {
+    margin-bottom: 0;
+    margin-right: 20px;
+}
+
+
+.comment__title img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+.rating {
+    overflow: hidden;
+    display: inline-block;
+    width: 155px;
+    height: 30px;
+}
+
+.rating input {
+    opacity: 0;
+    margin-right: -100%;
+}
+
+.rating label {
+    position: relative;
+    display: block;
+    float: right;
+    background: url('../static/img/star-off.png')
+    background-size: 30px 30px;
+}
+
+.rating label:before {
+    display: block;
+    opacity: 0;
+    background: url('../static/img/star-on.png')
+    background-size: 30px 30px;
+}
+
 
 
 
