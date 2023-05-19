@@ -2,18 +2,34 @@
 {% load static %}
 {% block add_css %}
 <link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<hr>
+
 <div class="one-recipe__container container">
+    <hr>
     <div class="one-recipe__top-wrapp">
         <div class="one-recipe__image">
             <img src="{{ recipe.image.url }}" alt="{{ recipe.name }}">
         </div>
         <div class="one-recipe__title">
+            {% if request.user.is_authenticated and request.user.profile != recipe.author %}
+            <form action="{% url 'add_favourite_recipe' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="recipe" value="{{ recipe }}" required="required">
+                {% if request.user.profile in recipe.liked_by.all %}
+                <input type="hidden" name="selected_recipe" value="Remove" required="required">
+                <button class="remove-button" type="submit" ></button>
+                {% else %}
+                <input type="hidden" name="selected_recipe" value="Add" required="required">
+                <button class="add-button" type="submit"></button>
+                {% endif %}
+            </form>
+            {% endif %}
             <h2>{{ recipe.name | capfirst }}</h2>
         </div>
     </div>
@@ -73,35 +89,111 @@
             <p>{{ recipe.description }}</p>
         </div>
     </div>
-    {% if request.user.is_authenticated and req%}
+    {% if request.user.is_authenticated and request.user.profile != recipe.author %}
     {% if comment_form %}
     <form id='add_form' method="post">
         {% csrf_token %}
 
         {{ comment_form.management_form }}
         {{ comment_form.non_form_errors }}
-        {% for field in comment_form %}
-        <div class="form-group">
-            <label class="col-form-label mt-1">{{ field.label_tag }}</label>
-            {{ field }}
-            {{ field.errors }}
+
+        <div class="form-group" id="rating-ability-wrapper">
+            <label class="control-label" for="rating">
+                <span class="field-label-header">Оцените рецепт:</span><br>
+                <span class="field-label-info"></span>
+                <input type="hidden" id="selected_rating" name="selected_rating" value="" required="required">
+            </label>
+            <h5 class="bold rating-header" style="">
+                <span class="selected-rating">0</span><small> / 5</small>
+            </h5>
+            <button type="button" class="btnrating btn btn-default btn-sm" data-attr="1" id="rating-star-1">
+                <i class="fa fa-star" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btnrating btn btn-default btn-sm" data-attr="2" id="rating-star-2">
+                <i class="fa fa-star" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btnrating btn btn-default btn-sm" data-attr="3" id="rating-star-3">
+                <i class="fa fa-star" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btnrating btn btn-default btn-sm" data-attr="4" id="rating-star-4">
+                <i class="fa fa-star" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btnrating btn btn-default btn-sm" data-attr="5" id="rating-star-5">
+                <i class="fa fa-star" aria-hidden="true"></i>
+            </button>
         </div>
-        {% endfor %}
+        <div class="form-group">
+            <label class="col-form-label mt-1">{{ comment_form.comment.label_tag }}</label>
+            {{ comment_form.comment.errors }}
+            {{ comment_form.comment }}
+        </div>
         <button class="btn btn-primary" type="submit">Отправить</button>
     </form>
     {% endif %}
     {% endif %}
-    {% for comment in comments %}
-    <div class="comment__info">
-        <div class="comment__title">
-            <img src="{{ comment.comment_author.photo.url }}" alt="{{ comment.comment_author }}">
-            <h6><strong>{{ comment.comment_author }}</strong>  {{ comment.date }}:</h6>
+    <div class="comments__wrapp">
+        <div>
+            <h5><strong>Комментарии:</strong></h5>
         </div>
-        <p>{{ comment.rating }}</p>
-        <p>{{ comment.comment }}</p>
+        {% for comment in comments %}
+        <div class="comment__info">
+            <div class="comment__title">
+                <img src="{{ comment.comment_author.photo.url }}" alt="{{ comment.comment_author }}">
+                <h6><strong>{{ comment.comment_author }}</strong> {{ comment.date | date:'SHORT_DATETIME_FORMAT' }}:
+                </h6>
+            </div>
+            <div class="star-rating__wrapp">
+            {% for i in const_rating %}
+            {% if i <= comment.rating %}
+            <div class="star-wrapp">
+                <span class="fa fa-star checked"></span>
+            </div>
+            {% else %}
+            <div class="star-wrapp__last">
+                <span class="fa fa-star"></span>
+            </div>
+            {% endif %}
+            {% empty %}
+            {% endfor %}
+            </div>
+            <p>{{ comment.comment }}</p>
+        </div>
+        {% empty %}
+        <div>
+            <h6>Нет комментариев</h6>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
+
+<script>
+    	jQuery(document).ready(function($){
+
+	$(".btnrating").on('click',(function(e) {
+
+	var previous_value = $("#selected_rating").val();
+
+	var selected_value = $(this).attr("data-attr");
+	$("#selected_rating").val(selected_value);
+
+	$(".selected-rating").empty();
+	$(".selected-rating").html(selected_value);
+
+	for (i = 1; i <= selected_value; ++i) {
+	$("#rating-star-"+i).toggleClass('btn-warning');
+	$("#rating-star-"+i).toggleClass('btn-default');
+	}
+
+	for (ix = 1; ix <= previous_value; ++ix) {
+	$("#rating-star-"+ix).toggleClass('btn-warning');
+	$("#rating-star-"+ix).toggleClass('btn-default');
+	}
+	}));
+});
+
+
+
+</script>
 
 
 {% endblock %}

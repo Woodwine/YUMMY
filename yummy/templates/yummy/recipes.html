@@ -25,17 +25,13 @@
                 <div class="card recipes__card" style="margin-bottom: 10px;">
                     <img src='{{ recipe.image.url }}' class="card-img-top" alt="recipe">
                     <div class="card-body">
-                        <h5 class="card-text">{{ recipe }}</h5>
+                        <h5 class="card-text">{{ recipe | capfirst }}</h5>
+                        {% if request.user.profile in recipe.liked_by.all %}
+                        <img src="{% static 'yummy/img/bookmark.png' %}">
+                        {% endif %}
                     </div>
                 </div>
             </a>
-            {% if request.user.is_authenticated and request.user.profile == recipe.author or request.user.is_staff %}
-            <div class="d-flex flex-row justify-content-around">
-                <a class="btn btn-primary btn-sm" href="{% url 'update_recipe' recipe.pk %}?next={{ request.path }}">
-                    Изменить рецепт
-                </a>
-            </div>
-            {% endif %}
         </div>
         {% endfor %}
 

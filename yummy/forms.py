@@ -138,13 +138,11 @@ class AddComment(forms.ModelForm):
 
     class Meta:
         model = Comments
-        fields = ('rating', 'comment', )
+        fields = ('comment', )
         labels = {
-            'rating': 'Рейтинг',
             'comment': 'Комментарий'
         }
         widgets = {
-            'rating': forms.RadioSelect(),
             'comment': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Оставьте комментарий к рецепту'

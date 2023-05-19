@@ -8,6 +8,14 @@ from transliterate import slugify
 
 from user.models import Profile
 
+RATING_CHOICES = [
+        (1, 1),
+        (2, 2),
+        (3, 3),
+        (4, 4),
+        (5, 5),
+    ]
+
 
 class CuisineType(ChoiceEnum):
     russia = 'Русская кухня'
@@ -135,13 +143,6 @@ class Ingredient(models.Model):
 
 
 class Comments(models.Model):
-    RATING_CHOICES = [
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4),
-        (5, 5),
-    ]
 
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
     rating = models.IntegerField(choices=RATING_CHOICES, default=0, blank=True, null=True)

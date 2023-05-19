@@ -61,36 +61,30 @@
                             <div class="card recipes__card" style="margin-bottom: 10px;">
                                 <img src='{{ recipe.image.url }}' class="card-img-top" alt="recipe">
                                 <div class="card-body">
-                                    <h5 class="card-text">{{ recipe }}</h5>
+                                    <h5 class="card-text">{{ recipe | capfirst }}</h5>
                                 </div>
                             </div>
                         </a>
-                        <div class="d-flex flex-row justify-content-around">
-                            <a class="btn btn-primary btn-sm"
-                               href="{% url 'update_recipe' recipe.pk %}?next={{ request.path }}">
-                                Изменить рецепт
-                            </a>
-                        </div>
                     </div>
                     {% endfor %}
                 </div>
             </div>
-            <!--            <div class="tab-pane fade" id="my_favourites" role="tabpanel">-->
-            <!--                <div class="recipes__wrapp">-->
-            <!--                    {% for recipe in my_favourites %}-->
-            <!--                    <div class="recipe__wrapp" style="margin-bottom: 25px;">-->
-            <!--                        <a href="{{ recipe.get_absolute_url }}">-->
-            <!--                            <div class="card recipes__card" style="margin-bottom: 10px;">-->
-            <!--                                <img src='{{ recipe.image.url }}' class="card-img-top" alt="recipe">-->
-            <!--                                <div class="card-body">-->
-            <!--                                    <h5 class="card-text">{{ recipe }}</h5>-->
-            <!--                                </div>-->
-            <!--                            </div>-->
-            <!--                        </a>-->
-            <!--                    </div>-->
-            <!--                    {% endfor %}-->
-            <!--                </div>-->
-            <!--            </div>-->
+            <div class="tab-pane fade" id="my_favourites" role="tabpanel">
+                <div class="recipes__wrapp">
+                    {% for recipe in my_favourites %}
+                    <div class="recipe__wrapp" style="margin-bottom: 25px;">
+                        <a href="{{ recipe.get_absolute_url }}">
+                            <div class="card recipes__card" style="margin-bottom: 10px;">
+                                <img src='{{ recipe.image.url }}' class="card-img-top" alt="recipe">
+                                <div class="card-body">
+                                    <h5 class="card-text">{{ recipe | capfirst }}</h5>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
 
         </div>
     </div>

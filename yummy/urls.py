@@ -15,4 +15,5 @@ urlpatterns = [
     path('recipes/add', views.add_recipe, name='add_recipe'),
     path('recipes/<slug:slug>', views.OneRecipeView.as_view(), name='recipe-details'),
     path('update_recipe/<int:pk>', views.update_recipe, name='update_recipe'),
+    path('add_favourite_recipe/', views.add_favourite_recipe, name='add_favourite_recipe'),
 ]

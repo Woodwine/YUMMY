@@ -18,7 +18,7 @@
             <div class="card recipes__card">
                 <img src='{{ item.image.url }}' class="card-img-top" alt="recipe">
                 <div class="card-body">
-                    <h4 class="card-text">{{ item }}</h4>
+                    <h4 class="card-text">{{ item | capfirst }}</h4>
                 </div>
             </div>
         </a>

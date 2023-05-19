@@ -62,8 +62,8 @@ class UserPasswordChangeView(DataMixin, PasswordChangeView):
 @login_required
 def profile(request):
     my_recipes = Recipe.objects.filter(author=request.user.profile)
-    # my_favourites =
-    return render(request, 'user/profile.html', {'menu': MENU, 'my_recipes': my_recipes})
+    my_favourites = Recipe.objects.filter(liked_by=request.user.profile)
+    return render(request, 'user/profile.html', {'menu': MENU, 'my_recipes': my_recipes, 'my_favourites': my_favourites})
 
 
 @login_required

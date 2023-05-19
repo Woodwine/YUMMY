@@ -93,6 +93,16 @@
     z-index: 3;
     color: white;
     font-size: 20px;
+    position: relative;
+}
+
+.card-body img {
+    width: 25px;
+    height: 29px;
+    opacity: 1;
+    position: absolute;
+    right: 11px;
+    bottom: 181px;
 }
 
 .card-text {
@@ -481,33 +491,63 @@ legend h3 {
     border-radius: 20px;
 }
 
-.rating {
-    overflow: hidden;
-    display: inline-block;
-    width: 155px;
-    height: 30px;
+.checked {
+  color: orange;
 }
 
-.rating input {
-    opacity: 0;
-    margin-right: -100%;
+.rating-header {
+    margin-top: -10px;
+    margin-bottom: 10px;
 }
 
-.rating label {
-    position: relative;
-    display: block;
-    float: right;
-    background: url('../static/img/star-off.png')
-    background-size: 30px 30px;
+.star-rating__wrapp {
+    display: flex;
 }
 
-.rating label:before {
-    display: block;
-    opacity: 0;
-    background: url('../static/img/star-on.png')
-    background-size: 30px 30px;
+.star-wrapp, .star-wrapp__last {
+    width: 27px;
+    height: 27px;
+    border-radius: 0.3rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin: 3px;
 }
 
+.star-wrapp {
+    background-color: var(--yellow);
+}
+
+.star-wrapp .checked {
+    color: white;
+}
+
+.star-wrapp__last {
+    background-color: #d8d8d8;
+}
+
+#rating-ability-wrapper .btn-default {
+    background-color: #d8d8d8;
+}
+
+#rating-ability-wrapper .btn-default .fa-star {
+    color: #888;
+}
+
+.remove-button, .add-button {
+    border: none;
+    width: 35px;
+    height: 41px;
+}
+
+.remove-button {
+    background: url("../img/bookmark.png");
+}
+
+.add-button {
+    background: url("../img/bookmark-add.png") no-repeat;
+}
 
 
 

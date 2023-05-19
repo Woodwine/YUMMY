@@ -5,14 +5,14 @@
 {% endblock %}
 
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}{{ title | capfirst }}{% endblock %}
 
 {% block content %}
 <form method="post">
     <fieldset>
         <div class="recipes__title">
             <hr>
-            <h3>Редактировать продукт: {{ title }}</h3>
+            <h3>Редактировать продукт: {{ title | capfirst }}</h3>
         </div>
         {% csrf_token %}
 

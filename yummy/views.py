@@ -142,14 +142,13 @@ class UpdateGoodsView(DataMixin, DeletionMixin, SuccessMessageMixin, UpdateView)
         return dict(list(context.items()) + list(c_def.items()))
 
 
-# CRUD for recipes
-# class GoodsAutocompleteView(autocomplete.Select2QuerySetView):
-#
-#     def get_queryset(self):
-#         qs = Goods.objects.all()
-#         if self.q:
-#             qs = qs.filter(name__icontains=self.q)
-#         return qs
+class RecipeAutocompleteView(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        qs = Recipe.objects.all()
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+        return qs
 
 
 class OneRecipeView(DataMixin, DeletionMixin, SuccessMessageMixin, DetailView):
@@ -173,14 +172,18 @@ class OneRecipeView(DataMixin, DeletionMixin, SuccessMessageMixin, DetailView):
             context['comment_form'] = AddComment
 
         context['comments'] = comments
+        context['const_rating'] = (1, 2, 3, 4, 5)
+        # context['users'] = self.object.liked_by.all()
         c_def = self.get_user_context(title=self.object)
         return dict(list(context.items()) + list(c_def.items()))
 
     def post(self, request, *args, **kwargs):
         comment_form = AddComment(request.POST)
         path = request.META.get('HTTP_REFERER', '/')
+
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
+            comment.rating = request.POST.get('selected_rating', 0)
             comment.recipe = self.get_object()
             comment.comment_author = request.user.profile
             comment.save()
@@ -195,8 +198,21 @@ class OneRecipeView(DataMixin, DeletionMixin, SuccessMessageMixin, DetailView):
             return self.render_to_response(context=context)
 
 
+@login_required
+def add_favourite_recipe(request):
+    path = request.META.get('HTTP_REFERER', '/')
+    if request.method == 'POST':
+        recipe = Recipe.objects.get(name=request.POST.get('recipe'))
+        user = request.user.profile
+        action = request.POST.get('selected_recipe')
+        if action == 'Add':
+            recipe.liked_by.add(user)
+        elif action == 'Remove':
+            recipe.liked_by.remove(user)
+        return redirect(path)
+
+
 def add_recipe(request):
-    menu = MENU
     return_path = request.GET.get('next') if request.GET.get('next') else ''
 
     if request.user.is_authenticated:
@@ -226,7 +242,7 @@ def add_recipe(request):
         else:
             recipe_form = AddRecipe()
             formset = IngredientFormSet()
-        return render(request, 'yummy/add_recipe.html', {'recipe_form': recipe_form, 'formset': formset, 'menu': menu})
+        return render(request, 'yummy/add_recipe.html', {'recipe_form': recipe_form, 'formset': formset, 'menu': MENU})
     else:
         return redirect('login')
 
