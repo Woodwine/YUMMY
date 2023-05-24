@@ -4,49 +4,55 @@
 <link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
 {% endblock %}
 
+
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
 <div class="breadcrumb-wrapp">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'home' %}">Домашняя страница</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'cuisines' %}">Кухни мира</a></li>
-        <li class="breadcrumb-item active">{{ title }}</li>
+        <li class="breadcrumb-item active">{{ title | capfirst }}</li>
     </ol>
 </div>
 
 <div class="recipe-list container">
-    <div class="recipe-title__wrapp">
-        <div class="recipes__title">
-            <hr>
-            <h3><strong>{{ title }}</strong></h3>
-        </div>
-        <div class="recipe__info">
-            <p align="center">{{ info }}</p>
+    {% if object_list %}
+    <div class="list-title">
+        <hr>
+        <div class="recipe-list__wrapp">
+            <div class="recipes__title">
+                <h3><strong>Список найденных рецептов:</strong></h3>
+            </div>
         </div>
     </div>
     <div class="recipes__wrapp">
-        {% for recipe in cus_recipes %}
+        {% for recipe in object_list %}
         <div class="recipe__wrapp" style="margin-bottom: 25px;">
             <a href="{{ recipe.get_absolute_url }}">
                 <div class="card recipes__card" style="margin-bottom: 10px;">
-                    <img src="{{ recipe.image.url }}" class="card-img-top" alt="recipe">
+                    <img src='{{ recipe.image.url }}' class="card-img-top" alt="recipe">
                     <div class="card-body">
                         <h5 class="card-text">{{ recipe | capfirst }}</h5>
+                        {% if request.user.profile in recipe.liked_by.all %}
+                        <img src="{% static 'yummy/img/bookmark.png' %}">
+                        {% endif %}
                     </div>
                 </div>
             </a>
-            {% if request.user.is_authenticated and request.user.profile == recipe.author or request.user.is_staff %}
-            <div class="d-flex flex-row justify-content-around">
-                <a class="btn btn-primary btn-sm" href="{% url 'update_recipe' recipe.pk %}?next={{ request.path }}">
-                    Изменить рецепт
-                </a>
-            </div>
-            {% endif %}
         </div>
         {% endfor %}
 
     </div>
+    {% else %}
+    <div class="list-title">
+        <hr>
+        <div class="recipe-list__wrapp">
+            <div class="recipes__title">
+                <h3><strong>По вашему запросу ничего не найдено</strong></h3>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 {% if is_paginated %}
@@ -55,7 +61,7 @@
 
         {% if page_obj.has_previous %}
         <li class="page-item">
-            <a class="page-link" href="?page=1">&laquo;</a>
+            <a class="page-link" href="?{{ q }}page=1">&laquo;</a>
         </li>
         {% else %}
         <li class="page-item disabled">
@@ -70,14 +76,14 @@
         </li>
         {% else %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+            <a class="page-link" href="?{{ q }}page={{ i }}">{{ i }}</a>
         </li>
         {% endif %}
         {% endfor %}
 
         {% if page_obj.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+            <a class="page-link" href="?{{ q }}page={{ page_obj.paginator.num_pages }}">&raquo;</a>
         </li>
         {% else %}
             <li class="page-item disabled" >
@@ -90,3 +96,4 @@
 
 
 {% endblock %}
+

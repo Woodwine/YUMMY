@@ -8,6 +8,12 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+<div class="breadcrumb-wrapp">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Домашняя страница</a></li>
+        <li class="breadcrumb-item active">{{ title | capfirst }}</li>
+    </ol>
+</div>
 
 <div class="content__goods container">
     <div class="goods-title">

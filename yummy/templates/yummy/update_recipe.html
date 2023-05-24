@@ -7,6 +7,14 @@
 {% block title %}Изменить рецепт{% endblock %}
 
 {% block content %}
+<div class="breadcrumb-wrapp">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Домашняя страница</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'recipes' %}">Рецепты</a></li>
+        <li class="breadcrumb-item active">Изменить рецепт</li>
+    </ol>
+</div>
+
 <div class="form-container container">
 
     <hr>

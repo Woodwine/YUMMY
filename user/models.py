@@ -8,7 +8,7 @@ from django.core.validators import MinLengthValidator
 class Profile(models.Model):
     user = models.OneToOneField(User, verbose_name='Пользователь', on_delete=models.CASCADE)
     date_of_birth = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
-    photo = models.ImageField(upload_to='users/', default='users/Default_User.svg', verbose_name='Фотография профиля')
+    photo = models.ImageField(upload_to='users/', default='users/user.svg', verbose_name='Фотография профиля')
 
     def __str__(self):
         return self.user.username

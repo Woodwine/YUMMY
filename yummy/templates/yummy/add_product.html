@@ -5,9 +5,16 @@
 {% endblock %}
 
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}{{ title | capfirst }}{% endblock %}
 
 {% block content %}
+<div class="breadcrumb-wrapp">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Домашняя страница</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'goods' %}">Продукты</a></li>
+        <li class="breadcrumb-item active">{{ title | capfirst }}</li>
+    </ol>
+</div>
 
 <hr>
 <form method="post">

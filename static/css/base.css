@@ -38,12 +38,16 @@ body {
 
 .user__wrapp img {
     position: absolute;
-    right: -5px;
+    right: -18px;
     bottom: -6px;
     width: 3rem;
     height: 3rem;
     object-fit: cover;
     border-radius: 1.5rem;
+}
+
+.add-recipe__btn {
+    margin-right: 40px;
 }
 
 .navbar-toggler-icon {

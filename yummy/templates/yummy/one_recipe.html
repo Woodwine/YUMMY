@@ -9,142 +9,23 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+<div class="breadcrumb-wrapp">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Домашняя страница</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'recipes' %}">Рецепты</a></li>
+        <li class="breadcrumb-item active">{{ title | capfirst }}</li>
+    </ol>
+</div>
 
 <div class="one-recipe__container container">
     <hr>
-    <div class="one-recipe__top-wrapp">
-        <div class="one-recipe__image">
-            <img src="{{ recipe.image.url }}" alt="{{ recipe.name }}">
-        </div>
-        <div class="one-recipe__title">
-            {% if request.user.is_authenticated and request.user.profile != recipe.author %}
-            <form action="{% url 'add_favourite_recipe' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="recipe" value="{{ recipe }}" required="required">
-                {% if request.user.profile in recipe.liked_by.all %}
-                <input type="hidden" name="selected_recipe" value="Remove" required="required">
-                <button class="remove-button" type="submit" ></button>
-                {% else %}
-                <input type="hidden" name="selected_recipe" value="Add" required="required">
-                <button class="add-button" type="submit"></button>
-                {% endif %}
-            </form>
-            {% endif %}
-            <h2>{{ recipe.name | capfirst }}</h2>
-        </div>
+    <div class="one-recipe__title">
+        <h1><strong>{{ recipe.name | capfirst }}</strong></h1>
     </div>
-    <div class="one-recipe__bottom-wrapp">
-        <div class="one-recipe__side-wrapp">
-            <div class="one-recipe__info">
-                <h5><b>Ингредиенты:</b></h5>
-                <ol>
-                    {% for ingredient in ingredients %}
-                    <li>
-                        {{ ingredient.ingredient.name | capfirst }} - {{ ingredient.quantity }}
-                        {{ ingredient.quantity_type }}
-                    </li>
-                    {% endfor %}
-                </ol>
-            </div>
-            <div class="one-recipe__info">
-                <h6><b>Тип блюда:</b></h6>
-                {{ recipe.department }}
-            </div>
-            {% if recipe.cuisine %}
-            <div class="one-recipe__info">
-                <h6><b>Кухня:</b></h6>
-                {{ recipe.cuisine }}
-            </div>
-            {% endif %}
-            <div class="one-recipe__info">
-                <h6><b>Время приготовления:</b></h6>
-                {% if time_in_hours %}
-                {{ time_in_hours }} ч.
-                {% endif %}
-                {% if time_in_minutes %}
-                {{ time_in_minutes }} мин.
-                {% endif %}
-            </div>
-            <div class="one-recipe__info">
-                <h6><b>Автор рецепта:</b></h6>
-                {{ recipe.author }}
-            </div>
-            <div class="one-recipe__info">
-                <h6><b>Дата добавления:</b></h6>
-                {{ recipe.date|date:'d.m.Y' }}
-            </div>
-            {% if request.user.is_authenticated and request.user.profile == recipe.author or request.user.is_staff %}
-            <div class="buttons-wrapp">
-                <a class="btn btn-primary recipe-button"
-                   href="{% url 'update_recipe' recipe.pk %}?next={{ request.path }}">
-                    Изменить рецепт</a>
-                <a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal" href='#'>
-                    Удалить
-                </a>
-            </div>
-            {% endif %}
-        </div>
-        <div class="one-recipe__descr">
-            <h5><b>Описание приготовления:</b></h5>
-            <p>{{ recipe.description }}</p>
-        </div>
-    </div>
-    {% if request.user.is_authenticated and request.user.profile != recipe.author %}
-    {% if comment_form %}
-    <form id='add_form' method="post">
-        {% csrf_token %}
-
-        {{ comment_form.management_form }}
-        {{ comment_form.non_form_errors }}
-
-        <div class="form-group" id="rating-ability-wrapper">
-            <label class="control-label" for="rating">
-                <span class="field-label-header">Оцените рецепт:</span><br>
-                <span class="field-label-info"></span>
-                <input type="hidden" id="selected_rating" name="selected_rating" value="" required="required">
-            </label>
-            <h5 class="bold rating-header" style="">
-                <span class="selected-rating">0</span><small> / 5</small>
-            </h5>
-            <button type="button" class="btnrating btn btn-default btn-sm" data-attr="1" id="rating-star-1">
-                <i class="fa fa-star" aria-hidden="true"></i>
-            </button>
-            <button type="button" class="btnrating btn btn-default btn-sm" data-attr="2" id="rating-star-2">
-                <i class="fa fa-star" aria-hidden="true"></i>
-            </button>
-            <button type="button" class="btnrating btn btn-default btn-sm" data-attr="3" id="rating-star-3">
-                <i class="fa fa-star" aria-hidden="true"></i>
-            </button>
-            <button type="button" class="btnrating btn btn-default btn-sm" data-attr="4" id="rating-star-4">
-                <i class="fa fa-star" aria-hidden="true"></i>
-            </button>
-            <button type="button" class="btnrating btn btn-default btn-sm" data-attr="5" id="rating-star-5">
-                <i class="fa fa-star" aria-hidden="true"></i>
-            </button>
-        </div>
-        <div class="form-group">
-            <label class="col-form-label mt-1">{{ comment_form.comment.label_tag }}</label>
-            {{ comment_form.comment.errors }}
-            {{ comment_form.comment }}
-        </div>
-        <button class="btn btn-primary" type="submit">Отправить</button>
-    </form>
-    {% endif %}
-    {% endif %}
-    <div class="comments__wrapp">
-        <div>
-            <h5><strong>Комментарии:</strong></h5>
-        </div>
-        {% for comment in comments %}
-        <div class="comment__info">
-            <div class="comment__title">
-                <img src="{{ comment.comment_author.photo.url }}" alt="{{ comment.comment_author }}">
-                <h6><strong>{{ comment.comment_author }}</strong> {{ comment.date | date:'SHORT_DATETIME_FORMAT' }}:
-                </h6>
-            </div>
-            <div class="star-rating__wrapp">
+    <div class="one-recipe__info-about">
+        <div class="star-rating__wrapp">
             {% for i in const_rating %}
-            {% if i <= comment.rating %}
+            {% if i <= recipe_rating %}
             <div class="star-wrapp">
                 <span class="fa fa-star checked"></span>
             </div>
@@ -153,10 +34,152 @@
                 <span class="fa fa-star"></span>
             </div>
             {% endif %}
-            {% empty %}
             {% endfor %}
+        </div>
+        <div class="info-about">
+            {{ recipe.department }}
+        </div>
+        {% if recipe.cuisine %}
+        <div class="info-about">
+            {{ recipe.cuisine }}
+        </div>
+        {% endif %}
+        <div class="info-about">
+            {% if time_in_hours %}
+            {{ time_in_hours }} ч.
+            {% endif %}
+            {% if time_in_minutes %}
+            {{ time_in_minutes }} мин.
+            {% endif %}
+        </div>
+        <div class="info-about">
+            {% if request.user.is_authenticated and request.user.profile != recipe.author %}
+            <form id="form-button" action="{% url 'add_favourite_recipe' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="recipe" value="{{ recipe }}" required="required">
+                {% if request.user.profile in recipe.liked_by.all %}
+                <input type="hidden" name="selected_recipe" value="Remove" required="required">
+                <button class="remove-button" type="submit"></button>
+                {% else %}
+                <input type="hidden" name="selected_recipe" value="Add" required="required">
+                <button class="add-button" type="submit"></button>
+                {% endif %}
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    <div class="one-recipe__image">
+        <img src="{{ recipe.image.url }}" alt="{{ recipe.name }}">
+    </div>
+    <div class="one-recipe__wrapp">
+        <div class="one-recipe__author">
+            <h5><strong>Автор рецепта:</strong></h5>
+            <p>{{ recipe.author }}</p>
+        </div>
+        <div class="ingredient-title">
+            <h5><strong>Ингредиенты:</strong></h5>
+        </div>
+        <div class="one-recipe__info">
+            {% for ingredient in ingredients %}
+            <div class="ingredient">
+                <span>{{ ingredient.ingredient.name | capfirst }}</span>
+                <div class="ingredient-line"></div>
+                <span>{{ ingredient.quantity }}</span>
+                <span>{{ ingredient.quantity_type }}</span>
             </div>
-            <p>{{ comment.comment }}</p>
+            {% endfor %}
+        </div>
+        <div class="description-title">
+            <h5><strong>Описание приготовления:</strong></h5>
+        </div>
+        <div class="one-recipe__description">
+            <p>{{ recipe.description | capfirst }}</p>
+        </div>
+    </div>
+
+    {% if request.user.is_authenticated and request.user.profile == recipe.author or request.user.is_staff %}
+    <div class="buttons-wrapp">
+        <a class="btn btn-primary recipe-button"
+           href="{% url 'update_recipe' recipe.pk %}?next={{ request.path }}">
+            Изменить рецепт</a>
+        <a class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal" href='#'>
+            Удалить
+        </a>
+    </div>
+    {% endif %}
+
+    {% if request.user.is_authenticated and request.user.profile != recipe.author %}
+    {% if comment_form %}
+    <div class="comment-form">
+        <form id='add_form' method="post">
+            {% csrf_token %}
+
+            {{ comment_form.management_form }}
+            {{ comment_form.non_form_errors }}
+
+            <div class="form-group" id="rating-ability-wrapper">
+                <label class="control-label" for="rating">
+                    <span class="field-label-header">Оцените рецепт:</span><br>
+                    <span class="field-label-info"></span>
+                    <input type="hidden" id="selected_rating" name="selected_rating" value="" required="required">
+                </label>
+                <h5 class="bold rating-header" style="">
+                    <span class="selected-rating">0</span><small> / 5</small>
+                </h5>
+                <button type="button" class="btnrating btn btn-default btn-sm" data-attr="1" id="rating-star-1">
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btnrating btn btn-default btn-sm" data-attr="2" id="rating-star-2">
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btnrating btn btn-default btn-sm" data-attr="3" id="rating-star-3">
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btnrating btn btn-default btn-sm" data-attr="4" id="rating-star-4">
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btnrating btn btn-default btn-sm" data-attr="5" id="rating-star-5">
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="form-group">
+                <label class="col-form-label mt-1">{{ comment_form.comment.label_tag }}</label>
+                {{ comment_form.comment.errors }}
+                {{ comment_form.comment }}
+            </div>
+            <button class="btn btn-primary" type="submit">Отправить</button>
+        </form>
+    </div>
+    {% endif %}
+    {% endif %}
+    <div class="comments__wrapp">
+        <div class="comments-title">
+            <h5><strong>Комментарии:</strong></h5>
+        </div>
+        {% for comment in comments %}
+        <div class="comment__info">
+            <div class="comment__title">
+                <img src="{{ comment.comment_author.photo.url }}" alt="{{ comment.comment_author }}">
+                <div class="comment__title-info">
+                    <h6><strong>{{ comment.comment_author }}</strong></h6>
+                    <span>{{ comment.date | date:'SHORT_DATE_FORMAT' }}</span>
+                    <div class="star-rating__wrapp comment-rating">
+                        {% for i in const_rating %}
+                        {% if i <= comment.rating %}
+                        <div class="star-wrapp">
+                            <span class="fa fa-star checked"></span>
+                        </div>
+                        {% else %}
+                        <div class="star-wrapp__last">
+                            <span class="fa fa-star"></span>
+                        </div>
+                        {% endif %}
+                        {% empty %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <span class="comment">{{ comment.comment | capfirst }}</span>
         </div>
         {% empty %}
         <div>
@@ -190,6 +213,24 @@
 	}
 	}));
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

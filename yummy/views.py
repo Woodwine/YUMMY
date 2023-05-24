@@ -1,15 +1,13 @@
-from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Value, F
+from django.db.models import Q, Avg
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
-from django.views.generic.base import View
+from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
-from .models import Recipe, Ingredient, Goods, CuisineType, DepartmentType, GoodsType, ProductQuantity, Comments
-from .forms import AddProduct, AddRecipe, AddIngredient, IngredientFormSet, AddComment
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, DeletionMixin, FormMixin
+from .models import Recipe, Ingredient, Goods, CuisineType, DepartmentType, GoodsType, Comments
+from .forms import AddProduct, AddRecipe, IngredientFormSet, AddComment
+from django.views.generic.edit import CreateView, UpdateView, DeletionMixin
 from django.views.generic.base import TemplateView
 from django.contrib import messages
 from django.db import transaction
@@ -49,7 +47,7 @@ class AllCuisinesView(DataMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['all_cuisines'] = {CuisineType[i]: CUISINE_INFO[i][0] for i in CuisineType._member_names_}
-        c_def = self.get_user_context(title='Все кухни')
+        c_def = self.get_user_context(title='Кухни мира')
         return dict(list(context.items()) + list(c_def.items()))
 
 
@@ -142,15 +140,6 @@ class UpdateGoodsView(DataMixin, DeletionMixin, SuccessMessageMixin, UpdateView)
         return dict(list(context.items()) + list(c_def.items()))
 
 
-class RecipeAutocompleteView(autocomplete.Select2QuerySetView):
-
-    def get_queryset(self):
-        qs = Recipe.objects.all()
-        if self.q:
-            qs = qs.filter(name__icontains=self.q)
-        return qs
-
-
 class OneRecipeView(DataMixin, DeletionMixin, SuccessMessageMixin, DetailView):
     # One recipe with details
     template_name = 'yummy/one_recipe.html'
@@ -168,12 +157,12 @@ class OneRecipeView(DataMixin, DeletionMixin, SuccessMessageMixin, DetailView):
             context['time_in_minutes'] = time_in_minutes
         context['ingredients'] = Ingredient.objects.filter(recipe=self.object.id)
         comments = Comments.objects.filter(recipe=self.object.id)
-        if (len(comments) > 0 and comments.get(comment_author=self.request.user.profile) is None) or len(comments) == 0:
+        if self.request.user.is_authenticated and comments.filter(comment_author=self.request.user.profile).count() == 0:
             context['comment_form'] = AddComment
 
         context['comments'] = comments
+        context['recipe_rating'] = comments.aggregate(Avg('rating'))['rating__avg']
         context['const_rating'] = (1, 2, 3, 4, 5)
-        # context['users'] = self.object.liked_by.all()
         c_def = self.get_user_context(title=self.object)
         return dict(list(context.items()) + list(c_def.items()))
 
@@ -231,9 +220,10 @@ def add_recipe(request):
                         recipe.time = time
                         recipe.save()
                         for form in formset:
-                            item = form.save(commit=False)
-                            item.recipe = recipe
-                            item.save()
+                            if form.is_valid():
+                                item = form.save(commit=False)
+                                item.recipe = recipe
+                                item.save()
                         messages.add_message(request, messages.SUCCESS, 'Рецепт успешно добавлен!')
                         return redirect(return_path) if return_path != '' else redirect('home')
                     else:
@@ -290,3 +280,24 @@ def update_recipe(request, pk):
                       {'recipe_form': recipe_form, 'formset': formset, 'recipe_pk': pk, 'menu': menu})
     else:
         return redirect('login')
+
+
+class SearchView(DataMixin, ListView):
+    model = Recipe
+    template_name = 'yummy/search_results.html'
+    paginate_by = 12
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        if query:
+            cus = [CuisineType[i] for i in CuisineType._member_names_ if query.lower() in CuisineType[i].verbose_name.lower()]
+            dep = [DepartmentType[i] for i in DepartmentType._member_names_ if query.lower() in DepartmentType[i].verbose_name.lower()]
+            object_list = Recipe.objects.filter(
+                Q(name__icontains=query) | Q(cuisine__in=cus) | Q(department__in=dep))
+            return object_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['q'] = f"q={self.request.GET.get('q')}&"
+        c_def = self.get_user_context(title='Результат поиска')
+        return dict(list(context.items()) + list(c_def.items()))

@@ -7,6 +7,13 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+<div class="breadcrumb-wrapp">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Домашняя страница</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'departments' %}">Виды блюд</a></li>
+        <li class="breadcrumb-item active">{{ title }}</li>
+    </ol>
+</div>
 
 <div class="recipe-list container">
     <div class="list-title">
