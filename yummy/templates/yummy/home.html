@@ -14,19 +14,23 @@
     </div>
     <div class="recipes__wrapp">
         {% for item in recipes %}
-        <a href="{{ item.get_absolute_url }}">
-            <div class="card recipes__card">
-                <img src='{{ item.image.url }}' class="card-img-top" alt="recipe">
-                <div class="card-body">
-                    <h4 class="card-text">{{ item | capfirst }}</h4>
+        <div class="recipe__wrapp">
+            <a href="{{ item.get_absolute_url }}">
+                <div class="card recipes__card">
+                    <img src='{{ item.image.url }}' class="card-img-top" alt="recipe">
+                    <div class="card-body">
+                        <h4 class="card-text">{{ item | capfirst }}</h4>
+                    </div>
                 </div>
-            </div>
-        </a>
+            </a>
+        </div>
         {% endfor %}
-        <div class="card recipes__card last-card">
-            <img src="{% static 'img/food.jpeg' %}" class="card-img-top" alt="recipe">
-            <div class="card-body">
-                <a href="{% url 'recipes' %}" class="btn btn-lg btn-primary"><strong>Все рецепты</strong></a>
+        <div class="recipe__wrapp">
+            <div class="card recipes__card last-card">
+                <img src="{% static 'img/food.jpeg' %}" class="card-img-top" alt="recipe">
+                <div class="card-body">
+                    <a href="{% url 'recipes' %}" class="btn btn-lg btn-primary"><strong>Все рецепты</strong></a>
+                </div>
             </div>
         </div>
     </div>
@@ -38,19 +42,23 @@
     </div>
     <div class="recipes__wrapp">
         {% for cuisine, c_img in cuisines.items %}
-        <a href="{% url 'cus_recipes' cuisine.name %}">
-            <div class="card recipes__card">
-                <img src={{ c_img }} class="card-img-top" alt="recipe">
-                <div class="card-body">
-                    <h4 class="card-text">{{ cuisine }}</h4>
+        <div class="recipe__wrapp">
+            <a href="{% url 'cus_recipes' cuisine.name %}">
+                <div class="card recipes__card">
+                    <img src={{ c_img }} class="card-img-top" alt="recipe">
+                    <div class="card-body">
+                        <h4 class="card-text">{{ cuisine }}</h4>
+                    </div>
                 </div>
-            </div>
-        </a>
+            </a>
+        </div>
         {% endfor %}
-        <div class="card recipes__card last-card">
-            <img src="{% static 'img/food.jpeg' %}" class="card-img-top" alt="recipe">
-            <div class="card-body">
-                <a href="{% url 'cuisines' %}" class="btn btn-lg btn-primary"><strong>Все кухни</strong></a>
+        <div class="recipe__wrapp">
+            <div class="card recipes__card last-card">
+                <img src="{% static 'img/food.jpeg' %}" class="card-img-top" alt="recipe">
+                <div class="card-body">
+                    <a href="{% url 'cuisines' %}" class="btn btn-lg btn-primary"><strong>Все кухни</strong></a>
+                </div>
             </div>
         </div>
     </div>
@@ -62,19 +70,23 @@
     </div>
     <div class="recipes__wrapp">
         {% for department, d_img in departments.items %}
-        <a href="{% url 'dep_recipes' department.name %}">
-            <div class="card recipes__card">
-                <img src={{ d_img }} class="card-img-top" alt="recipe">
-                <div class="card-body">
-                    <h4 class="card-text">{{ department }}</h4>
+        <div class="recipe__wrapp">
+            <a href="{% url 'dep_recipes' department.name %}">
+                <div class="card recipes__card">
+                    <img src={{ d_img }} class="card-img-top" alt="recipe">
+                    <div class="card-body">
+                        <h4 class="card-text">{{ department }}</h4>
+                    </div>
                 </div>
-            </div>
-        </a>
+            </a>
+        </div>
         {% endfor %}
-        <div class="card recipes__card last-card">
-            <img src="{% static 'img/food.jpeg' %}" class="card-img-top" alt="recipe">
-            <div class="card-body">
-                <a href="{% url 'departments' %}" class="btn btn-lg btn-primary"><strong>Все виды блюд</strong></a>
+        <div class="recipe__wrapp">
+            <div class="card recipes__card last-card">
+                <img src="{% static 'img/food.jpeg' %}" class="card-img-top" alt="recipe">
+                <div class="card-body">
+                    <a href="{% url 'departments' %}" class="btn btn-lg btn-primary"><strong>Все виды блюд</strong></a>
+                </div>
             </div>
         </div>
 

@@ -84,8 +84,7 @@
             <div class="ingredient">
                 <span>{{ ingredient.ingredient.name | capfirst }}</span>
                 <div class="ingredient-line"></div>
-                <span>{{ ingredient.quantity }}</span>
-                <span>{{ ingredient.quantity_type }}</span>
+                <span>{{ ingredient.quantity | floatformat }}&nbsp;{{ ingredient.quantity_type }}</span>
             </div>
             {% endfor %}
         </div>
@@ -93,7 +92,7 @@
             <h5><strong>Описание приготовления:</strong></h5>
         </div>
         <div class="one-recipe__description">
-            <p>{{ recipe.description | capfirst }}</p>
+            <p>{{ recipe.description }}</p>
         </div>
     </div>
 
@@ -111,7 +110,7 @@
     {% if request.user.is_authenticated and request.user.profile != recipe.author %}
     {% if comment_form %}
     <div class="comment-form">
-        <form id='add_form' method="post">
+        <form action="{% url 'add_comment' %}" id='add_form' method="post">
             {% csrf_token %}
 
             {{ comment_form.management_form }}
@@ -147,6 +146,7 @@
                 {{ comment_form.comment.errors }}
                 {{ comment_form.comment }}
             </div>
+            <input type="hidden" name="recipe" value="{{ recipe }}" required="required">
             <button class="btn btn-primary" type="submit">Отправить</button>
         </form>
     </div>

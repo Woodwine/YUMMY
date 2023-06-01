@@ -1,27 +1,33 @@
 from django.contrib import admin
-from .models import Ingredient, Recipe, Goods
+from enumchoicefield.admin import EnumListFilter
+
+from .models import Ingredient, Recipe, Goods, Comments, GoodsType
+
 
 # Register your models here.
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ['name', 'date']
-    ordering = ['date']
-    search_fields = ['name']
-    list_filter = ['cuisine', 'department']
+    list_display = ['name', 'author', 'date', 'cuisine', 'department']
+    search_fields = ['name', 'author__user__username']
+    list_filter = [('cuisine', EnumListFilter), ('department', EnumListFilter)]
 
 
 @admin.register(Goods)
 class GoodsAdmin(admin.ModelAdmin):
     list_display = ['name', 'type']
-    ordering = ['name']
-    search_fields = ['name', 'type']
-    list_filter = ['name', 'type']
+    search_fields = ['name']
+    list_filter = ['name', ('type', EnumListFilter)]
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ['ingredient', 'quantity', 'quantity_type', 'recipe']
-    ordering = ['ingredient']
-    search_fields = ['ingredient']
+    search_fields = ['ingredient__name']
+
+
+@admin.register(Comments)
+class CommentsAdmin(admin.ModelAdmin):
+    list_display = ['comment_author', 'rating', 'recipe', 'date']
+    search_fields = ['comment_author__user__username', 'recipe__name']

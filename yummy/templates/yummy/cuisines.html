@@ -22,14 +22,16 @@
     </div>
     <div class="recipes__wrapp">
         {% for cus, img in all_cuisines.items %}
-        <a href="{% url 'cus_recipes' cus.name %}">
-            <div class="card recipes__card">
-                <img src={{ img }} class="card-img-top" alt="recipe">
-                <div class="card-body">
-                    <h5 class="card-text">{{ cus }}</h5>
+        <div class="recipe__wrapp">
+            <a href="{% url 'cus_recipes' cus.name %}">
+                <div class="card recipes__card">
+                    <img src={{ img }} class="card-img-top" alt="recipe">
+                    <div class="card-body">
+                        <h5 class="card-text">{{ cus }}</h5>
+                    </div>
                 </div>
-            </div>
-        </a>
+            </a>
+        </div>
         {% endfor %}
     </div>
 </div>

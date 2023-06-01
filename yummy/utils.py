@@ -102,13 +102,6 @@ MENU = [
         {'name': 'Греческая кухня', 'm_url': 'cus_recipes', 'cntr': 'greece'},
     ]},
     {'menu_title': 'Ингредиенты', 'm_url': "goods"},
-    {'menu_title': 'Блог', 'm_url': 'home'},
+    # {'menu_title': 'Блог', 'm_url': 'home'},
     {'menu_title': 'О нас', 'm_url': 'home'},
 ]
-
-
-class DataMixin:
-    def get_user_context(self, **kwargs):
-        context = kwargs
-        context['menu'] = MENU
-        return context

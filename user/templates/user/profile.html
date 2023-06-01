@@ -4,9 +4,15 @@
 <link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
 {% endblock %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}{{ request.user }}{% endblock %}
 
 {% block content %}
+<div class="breadcrumb-wrapp">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Домашняя страница</a></li>
+        <li class="breadcrumb-item active">{{ request.user }}</li>
+    </ol>
+</div>
 
 <div class="container">
     <div class="profile__container">
@@ -52,38 +58,44 @@
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="my_recipes" role="tabpanel">
+            <div class="tab-pane fade recipes__wrapp" id="my_recipes" role="tabpanel">
 
-                <div class="my-recipes__wrapp">
-                    {% for recipe in my_recipes %}
-                    <div class="recipe__wrapp" style="margin-bottom: 25px;">
-                        <a href="{{ recipe.get_absolute_url }}">
-                            <div class="card recipes__card" style="margin-bottom: 10px;">
-                                <img src='{{ recipe.image.url }}' class="card-img-top" alt="recipe">
-                                <div class="card-body">
-                                    <h5 class="card-text">{{ recipe | capfirst }}</h5>
-                                </div>
+                {% for recipe in my_recipes %}
+                <div class="recipe__wrapp">
+                    <a href="{{ recipe.get_absolute_url }}">
+                        <div class="card recipes__card">
+                            <img src='{{ recipe.image.url }}' class="card-img-top" alt="recipe">
+                            <div class="card-body">
+                                <h5 class="card-text">{{ recipe | capfirst }}</h5>
                             </div>
-                        </a>
-                    </div>
-                    {% endfor %}
+                        </div>
+                    </a>
                 </div>
+                {% empty %}
+                <div class="wrapp__left-side" style="margin: 30px 0;">
+                    <h5>Нет созданных рецептов</h5>
+                </div>
+                {% endfor %}
+
             </div>
-            <div class="tab-pane fade" id="my_favourites" role="tabpanel">
-                <div class="recipes__wrapp">
-                    {% for recipe in my_favourites %}
-                    <div class="recipe__wrapp" style="margin-bottom: 25px;">
-                        <a href="{{ recipe.get_absolute_url }}">
-                            <div class="card recipes__card" style="margin-bottom: 10px;">
-                                <img src='{{ recipe.image.url }}' class="card-img-top" alt="recipe">
-                                <div class="card-body">
-                                    <h5 class="card-text">{{ recipe | capfirst }}</h5>
-                                </div>
+            <div class="tab-pane fade recipes__wrapp" id="my_favourites" role="tabpanel">
+                {% for recipe in my_favourites %}
+                <div class="recipe__wrapp">
+                    <a href="{{ recipe.get_absolute_url }}">
+                        <div class="card recipes__card">
+                            <img src='{{ recipe.image.url }}' class="card-img-top" alt="recipe">
+                            <div class="card-body">
+                                <h5 class="card-text">{{ recipe | capfirst }}</h5>
                             </div>
-                        </a>
-                    </div>
-                    {% endfor %}
+                        </div>
+                    </a>
                 </div>
+
+                {% empty %}
+                <div class="wrapp__left-side" style="margin: 50px 0;">
+                    <h5>Нет сохраненных рецептов</h5>
+                </div>
+                {% endfor %}
             </div>
 
         </div>

@@ -1,33 +1,33 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q, Avg
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from .models import Recipe, Ingredient, Goods, CuisineType, DepartmentType, GoodsType, Comments
 from .forms import AddProduct, AddRecipe, IngredientFormSet, AddComment
-from django.views.generic.edit import CreateView, UpdateView, DeletionMixin
+from django.views.generic.edit import CreateView, UpdateView, DeletionMixin, FormView
 from django.views.generic.base import TemplateView
 from django.contrib import messages
 from django.db import transaction
-from .utils import DataMixin, CUISINE_INFO, DEP_INFO, MENU
+from .utils import CUISINE_INFO, DEP_INFO, MENU
 
 
-class HomePageView(DataMixin, TemplateView):
+class HomePageView(TemplateView):
     # Home page
     template_name = 'yummy/home.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        c_def = self.get_user_context(title='Домашняя страница')
+        context['menu'] = MENU
+        context['title'] = 'Домашняя страница'
         context['recipes'] = Recipe.objects.all()[:5]
         context['cuisines'] = {CuisineType[i]: CUISINE_INFO[i][0] for i in CuisineType._member_names_[:5]}
         context['departments'] = {DepartmentType[i]: DEP_INFO[i] for i in DepartmentType._member_names_[:5]}
-        return dict(list(context.items()) + list(c_def.items()))
+        return context
 
 
-class AllRecipesView(DataMixin, ListView):
+class AllRecipesView(ListView):
     # List of all recipes
     context_object_name = 'all_recipes'
     model = Recipe
@@ -36,33 +36,42 @@ class AllRecipesView(DataMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        c_def = self.get_user_context(title='Все рецепты')
-        return dict(list(context.items()) + list(c_def.items()))
+        context['const_rating'] = (1, 2, 3, 4, 5)
+        context['title'] = 'Все рецепты'
+        context['menu'] = MENU
+        return context
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        full_qs = [{'recipe': i, 'rating': i.comments_set.aggregate(Avg('rating'))['rating__avg']} for i in qs]
+        return full_qs
 
 
-class AllCuisinesView(DataMixin, TemplateView):
+class AllCuisinesView(TemplateView):
     # List of all recipes
     template_name = 'yummy/cuisines.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['all_cuisines'] = {CuisineType[i]: CUISINE_INFO[i][0] for i in CuisineType._member_names_}
-        c_def = self.get_user_context(title='Кухни мира')
-        return dict(list(context.items()) + list(c_def.items()))
+        context['title'] = 'Кухни мира'
+        context['menu'] = MENU
+        return context
 
 
-class AllDepartmentsView(DataMixin, TemplateView):
+class AllDepartmentsView(TemplateView):
     # List of all recipes
     template_name = 'yummy/departments.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['all_departments'] = {DepartmentType[i]: DEP_INFO[i] for i in DepartmentType._member_names_}
-        c_def = self.get_user_context(title='Виды блюд')
-        return dict(list(context.items()) + list(c_def.items()))
+        context['title'] = 'Виды блюд'
+        context['menu'] = MENU
+        return context
 
 
-class DepartmentRecipesView(DataMixin, ListView):
+class DepartmentRecipesView(ListView):
     model = Recipe
     template_name = 'yummy/dep_recipes.html'
     paginate_by = 12
@@ -71,8 +80,10 @@ class DepartmentRecipesView(DataMixin, ListView):
     def get_context_data(self, **kwargs):
         dep = DepartmentType[self.kwargs['dep']]
         context = super().get_context_data(**kwargs)
-        c_def = self.get_user_context(title=dep)
-        return dict(list(context.items()) + list(c_def.items()))
+        context['const_rating'] = (1, 2, 3, 4, 5)
+        context['title'] = dep
+        context['menu'] = MENU
+        return context
 
     def get_queryset(self):
         recipes = super().get_queryset()
@@ -80,7 +91,7 @@ class DepartmentRecipesView(DataMixin, ListView):
         return recipes.filter(department=dep)
 
 
-class CuisineRecipesView(DataMixin, ListView):
+class CuisineRecipesView(ListView):
     model = Recipe
     template_name = 'yummy/cuisine_recipes.html'
     paginate_by = 12
@@ -91,8 +102,10 @@ class CuisineRecipesView(DataMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['info'] = CUISINE_INFO[cus.name][1]
         context['img'] = CUISINE_INFO[cus.name][0]
-        c_def = self.get_user_context(title=cus)
-        return dict(list(context.items()) + list(c_def.items()))
+        context['const_rating'] = (1, 2, 3, 4, 5)
+        context['title'] = cus
+        context['menu'] = MENU
+        return context
 
     def get_queryset(self):
         cus_recipes = super().get_queryset()
@@ -100,7 +113,7 @@ class CuisineRecipesView(DataMixin, ListView):
         return cus_recipes.filter(cuisine=cus)
 
 
-class AllGoodsView(DataMixin, ListView):
+class AllGoodsView(ListView):
     # List of all goods
     model = Goods
     template_name = 'yummy/goods.html'
@@ -108,11 +121,12 @@ class AllGoodsView(DataMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['goods'] = {GoodsType[i]: Goods.objects.filter(type=GoodsType[i]) for i in GoodsType._member_names_}
-        c_def = self.get_user_context(title='Продукты, используемые в рецептах')
-        return dict(list(context.items()) + list(c_def.items()))
+        context['title'] = 'Продукты, используемые в рецептах'
+        context['menu'] = MENU
+        return context
 
 
-class AddGoodsView(DataMixin, SuccessMessageMixin, CreateView):
+class AddGoodsView(SuccessMessageMixin, CreateView):
     # Add one product
     model = Goods
     form_class = AddProduct
@@ -122,11 +136,12 @@ class AddGoodsView(DataMixin, SuccessMessageMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        c_def = self.get_user_context(title='Добавить новый продукт')
-        return dict(list(context.items()) + list(c_def.items()))
+        context['title'] = 'Добавить новый продукт'
+        context['menu'] = MENU
+        return context
 
 
-class UpdateGoodsView(DataMixin, DeletionMixin, SuccessMessageMixin, UpdateView):
+class UpdateGoodsView(DeletionMixin, SuccessMessageMixin, UpdateView):
     # Update one product
     model = Goods
     form_class = AddProduct
@@ -136,11 +151,12 @@ class UpdateGoodsView(DataMixin, DeletionMixin, SuccessMessageMixin, UpdateView)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        c_def = self.get_user_context(title=context['object'])
-        return dict(list(context.items()) + list(c_def.items()))
+        context['title'] = context['object']
+        context['menu'] = MENU
+        return context
 
 
-class OneRecipeView(DataMixin, DeletionMixin, SuccessMessageMixin, DetailView):
+class OneRecipeView(DeletionMixin, SuccessMessageMixin, DetailView):
     # One recipe with details
     template_name = 'yummy/one_recipe.html'
     model = Recipe
@@ -151,47 +167,61 @@ class OneRecipeView(DataMixin, DeletionMixin, SuccessMessageMixin, DetailView):
         context = super().get_context_data(**kwargs)
         time_in_hours = self.object.time // 60
         time_in_minutes = self.object.time % 60
+
         if time_in_hours != 0:
             context['time_in_hours'] = time_in_hours
+
         if time_in_minutes != 0:
             context['time_in_minutes'] = time_in_minutes
+
         context['ingredients'] = Ingredient.objects.filter(recipe=self.object.id)
         comments = Comments.objects.filter(recipe=self.object.id)
+
         if self.request.user.is_authenticated and comments.filter(comment_author=self.request.user.profile).count() == 0:
             context['comment_form'] = AddComment
 
         context['comments'] = comments
         context['recipe_rating'] = comments.aggregate(Avg('rating'))['rating__avg']
         context['const_rating'] = (1, 2, 3, 4, 5)
-        c_def = self.get_user_context(title=self.object)
-        return dict(list(context.items()) + list(c_def.items()))
+        context['title'] = self.object
+        context['menu'] = MENU
+        return context
 
     def post(self, request, *args, **kwargs):
-        comment_form = AddComment(request.POST)
-        path = request.META.get('HTTP_REFERER', '/')
+        if request.POST.get('action') == 'delete':
+            recipe = self.get_object()
+            recipe.delete()
+            messages.add_message(request, messages.SUCCESS, 'Рецепт успешно  удален!')
+            return redirect('profile')
 
+
+@login_required
+def add_comment(request):
+    comment_form = AddComment(request.POST)
+    rating = request.POST.get('selected_rating', 0)
+    recipe = get_object_or_404(Recipe, name=request.POST.get('recipe'))
+    path = request.META.get('HTTP_REFERER', '/')
+
+    if request.method == 'POST':
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
-            comment.rating = request.POST.get('selected_rating', 0)
-            comment.recipe = self.get_object()
+            comment.rating = rating if rating != '' else 0
+            comment.recipe = recipe
             comment.comment_author = request.user.profile
             comment.save()
-            self.object = self.get_object()
-            context = super(OneRecipeView, self).get_context_data(**kwargs)
-            context['comments'] = Comments.objects.filter(recipe=self.object.id)
-            return redirect(path, context=context)
+            comments = Comments.objects.filter(recipe=recipe)
+            return redirect(path, {'comments': comments})
         else:
-            self.object = self.get_object()
-            context = super(OneRecipeView, self).get_context_data(**kwargs)
-            context['comments'] = Comments.objects.filter(recipe=self.object.id)
-            return self.render_to_response(context=context)
+            comments = Comments.objects.filter(recipe=recipe)
+            comment_form = AddComment()
+            return redirect(path, {'comments': comments, 'comment_form': comment_form})
 
 
 @login_required
 def add_favourite_recipe(request):
     path = request.META.get('HTTP_REFERER', '/')
     if request.method == 'POST':
-        recipe = Recipe.objects.get(name=request.POST.get('recipe'))
+        recipe = get_object_or_404(Recipe, name=request.POST.get('recipe'))
         user = request.user.profile
         action = request.POST.get('selected_recipe')
         if action == 'Add':
@@ -202,33 +232,24 @@ def add_favourite_recipe(request):
 
 
 def add_recipe(request):
-    return_path = request.GET.get('next') if request.GET.get('next') else ''
-
     if request.user.is_authenticated:
         if request.method == 'POST':
             recipe_form = AddRecipe(request.POST or None, request.FILES or None)
             formset = IngredientFormSet(request.POST or None, request.FILES or None)
+            return_path = request.GET.get('next') if request.GET.get('next') else ''
             with transaction.atomic():
                 if recipe_form.is_valid() and formset.is_valid():
                     recipe = recipe_form.save(commit=False)
                     recipe.author = request.user.profile
-                    time_in_hours = int(request.POST['time_in_hours']) if request.POST['time_in_hours'] != '' else 0
-                    time_in_minutes = int(request.POST['time_in_minutes']) if request.POST[
-                                                                                  'time_in_minutes'] != '' else 0
-                    time = time_in_hours * 60 + time_in_minutes
-                    if time > 0:
-                        recipe.time = time
-                        recipe.save()
-                        for form in formset:
-                            if form.is_valid():
-                                item = form.save(commit=False)
-                                item.recipe = recipe
-                                item.save()
-                        messages.add_message(request, messages.SUCCESS, 'Рецепт успешно добавлен!')
-                        return redirect(return_path) if return_path != '' else redirect('home')
-                    else:
-                        messages.add_message(request, messages.ERROR, 'Время приготовления не может быть равно 0')
-                        return redirect(request.META.get('HTTP_REFERER', '/'))
+                    recipe.time = recipe_form.cleaned_data['time']
+                    recipe.save()
+                    for form in formset:
+                        if form.is_valid():
+                            item = form.save(commit=False)
+                            item.recipe = recipe
+                            item.save()
+                    messages.add_message(request, messages.SUCCESS, 'Рецепт успешно добавлен!')
+                    return redirect(return_path) if return_path != '' else redirect('home')
         else:
             recipe_form = AddRecipe()
             formset = IngredientFormSet()
@@ -238,51 +259,45 @@ def add_recipe(request):
 
 
 def update_recipe(request, pk):
-    menu = MENU
-    return_path = request.GET.get('next') if request.GET.get('next') else ''
-    recipe = Recipe.objects.get(id=pk)
-    time_in_hours = recipe.time // 60
-    time_in_minutes = recipe.time % 60
-    q_set = Ingredient.objects.filter(recipe=recipe)
-
     if request.user.is_authenticated:
+        return_path = request.GET.get('next') if request.GET.get('next') else ''
+        recipe = get_object_or_404(Recipe, id=pk)
+        time_in_hours = recipe.time // 60
+        time_in_minutes = recipe.time % 60
+        q_set = Ingredient.objects.filter(recipe=recipe)
+        recipe_form = AddRecipe(request.POST, request.FILES, instance=recipe)
+        formset = IngredientFormSet(request.POST, request.FILES, instance=recipe, queryset=q_set)
         if request.method == 'POST':
             if request.POST.get('action') == 'delete':
                 recipe.delete()
                 messages.add_message(request, messages.SUCCESS, 'Рецепт успешно  удален!')
                 return redirect('profile')
             else:
-                recipe_form = AddRecipe(request.POST, request.FILES, instance=recipe)
-                formset = IngredientFormSet(request.POST, request.FILES, instance=recipe, queryset=q_set)
+                print('POST')
                 with transaction.atomic():
                     if recipe_form.is_valid() and formset.is_valid():
                         new_recipe = recipe_form.save(commit=False)
-                        time_in_hours = int(request.POST['time_in_hours']) if request.POST[
-                                                                                  'time_in_hours'] != '' else 0
-                        time_in_minutes = int(request.POST['time_in_minutes']) if request.POST[
-                                                                                      'time_in_minutes'] != '' else 0
-                        time = time_in_hours * 60 + time_in_minutes
-                        if time > 0:
-                            new_recipe.time = time
-                            new_recipe.save()
-                            formset.save()
-                            messages.add_message(request, messages.SUCCESS, 'Рецепт успешно обновлен!')
-                            return redirect(return_path) if return_path != '' else redirect('home')
-                        else:
-                            messages.add_message(request, messages.ERROR,
-                                                 'Время приготовления не может быть равно 0')
-                            return redirect(request.META.get('HTTP_REFERER', '/'))
+                        new_recipe.time = recipe_form.cleaned_data['time']
+                        new_recipe.save()
+                        for form in formset:
+                            if form.is_valid():
+                                item = form.save(commit=False)
+                                if not item.recipe:
+                                    item.recipe = new_recipe
+                                item.save()
+                        messages.add_message(request, messages.SUCCESS, 'Рецепт успешно обновлен!')
+                        return redirect(return_path) if return_path != '' else redirect('home')
         else:
             recipe_form = AddRecipe(instance=recipe, initial={'time_in_hours': time_in_hours,
                                                               'time_in_minutes': time_in_minutes})
             formset = IngredientFormSet(instance=recipe, queryset=q_set)
         return render(request, 'yummy/update_recipe.html',
-                      {'recipe_form': recipe_form, 'formset': formset, 'recipe_pk': pk, 'menu': menu})
+                      {'recipe_form': recipe_form, 'formset': formset, 'recipe_pk': pk, 'menu': MENU})
     else:
         return redirect('login')
 
 
-class SearchView(DataMixin, ListView):
+class SearchView(ListView):
     model = Recipe
     template_name = 'yummy/search_results.html'
     paginate_by = 12
@@ -295,9 +310,13 @@ class SearchView(DataMixin, ListView):
             object_list = Recipe.objects.filter(
                 Q(name__icontains=query) | Q(cuisine__in=cus) | Q(department__in=dep))
             return object_list
+        else:
+            return Recipe.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['q'] = f"q={self.request.GET.get('q')}&"
-        c_def = self.get_user_context(title='Результат поиска')
-        return dict(list(context.items()) + list(c_def.items()))
+        context['title'] = 'Результат поиска'
+        context['menu'] = MENU
+        return context
+

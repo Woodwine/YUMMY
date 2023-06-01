@@ -7,6 +7,5 @@ from .models import Profile
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ['user', 'date_of_birth', 'photo']
-    ordering = ['user']
-    search_fields = ['user']
+    search_fields = ['user__username']
 

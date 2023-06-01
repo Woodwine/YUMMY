@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load new_tags %}
 {% block add_css %}
 <link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
 {% endblock %}
@@ -22,16 +23,20 @@
         <h3><strong>Изменение рецепта</strong></h3>
     </div>
 
-    <form method="post" enctype="multipart/form-data">
+    <form class="needs-validation" method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
         {{ recipe_form.management_form }}
-        {{ recipe_form.non_form_errors }}
+        {{ recipe_form.non_field_errors }}
 
         {% for field in recipe_form %}
         <div class="form-group">
             <label class="col-form-label mt-1">{{ field.label_tag }}</label>
+            {% if field.errors %}
+            {{ field | add_attr:'is-invalid' }}
+            {% else %}
             {{ field }}
+            {% endif %}
             {{ field.errors }}
         </div>
         {% endfor %}
@@ -44,10 +49,38 @@
                 {{ formset.management_form }}
                 {{ formset.non_form_errors }}
                 {% for form in formset %}
-                <div class="form-style">
-                    <div class="form-group ingredient-form">
-                        {{ form.errors }}
-                        {{ form.as_table }}
+                <div class="ingredient-form">
+                    {{ form.id.as_hidden }}
+                    <div class="form-group">
+                        <label class="col-form-label pt-0 pb-0">{{ form.ingredient.label_tag }}</label>
+                        {% if form.ingredient.errors %}
+                        {{ form.ingredient | add_attr:'is-invalid' }}
+                        {% else %}
+                        {{ form.ingredient }}
+                        {% endif %}
+                        {{ form.ingredient.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label pt-0 pb-0">{{ form.quantity.label_tag }}</label>
+                        {% if form.quantity.errors %}
+                        {{ form.quantity | add_attr:'is-invalid' }}
+                        {% else %}
+                        {{ form.quantity }}
+                        {% endif %}
+                        {{ form.quantity.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label pt-0 pb-0">{{ form.quantity_type.label_tag }}</label>
+                        {% if form.quantity_type.errors %}
+                        {{ form.quantity_type | add_attr:'is-invalid' }}
+                        {% else %}
+                        {{ form.quantity_type }}
+                        {% endif %}
+                        {{ form.quantity_type.errors }}
+                    </div>
+                    <div>
+                        <label class="col-form-label pt-0 pb-0">{{ form.DELETE.label_tag }}</label>
+                        {{ form.DELETE }}
                     </div>
                 </div>
                 {% endfor %}
@@ -65,6 +98,7 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"
         integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 
 <script>
         let ingredientForm = document.querySelectorAll(".ingredient-form")
@@ -112,6 +146,8 @@
             placeholder: 'Выберите ингредиент',
             });
         }
+
+
 
 
 </script>

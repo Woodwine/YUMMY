@@ -2,6 +2,8 @@
 {% load static %}
 {% block add_css %}
 <link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
 
 
@@ -25,16 +27,28 @@
         </div>
     </div>
     <div class="recipes__wrapp">
-        {% for recipe in all_recipes %}
-        <div class="recipe__wrapp" style="margin-bottom: 25px;">
-            <a href="{{ recipe.get_absolute_url }}">
-                <div class="card recipes__card" style="margin-bottom: 10px;">
-                    <img src='{{ recipe.image.url }}' class="card-img-top" alt="recipe">
+        {% for item in all_recipes %}
+        <div class="recipe__wrapp">
+            <a href="{{ item.recipe.get_absolute_url }}">
+                <div class="card recipes__card">
+                    <img src='{{ item.recipe.image.url }}' class="card-img-top" alt="recipe">
                     <div class="card-body">
-                        <h5 class="card-text">{{ recipe | capfirst }}</h5>
-                        {% if request.user.profile in recipe.liked_by.all %}
+                        <h5 class="card-text">{{ item.recipe | capfirst }}</h5>
+                        {% if request.user.profile in item.recipe.liked_by.all %}
                         <img src="{% static 'yummy/img/bookmark-small.svg' %}">
                         {% endif %}
+                        <div class="star-rating__wrapp comment-rating card-rating">
+                            {% if item.rating %}
+                            {% for i in const_rating %}
+                            {% if i <= item.rating %}
+                            <div class="star-wrapp">
+                                <span class="fa fa-star checked"></span>
+                            </div>
+                            {% endif %}
+                            {% empty %}
+                            {% endfor %}
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </a>

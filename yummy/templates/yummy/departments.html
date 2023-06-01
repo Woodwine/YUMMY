@@ -22,14 +22,16 @@
     </div>
     <div class="recipes__wrapp">
         {% for dep, img in all_departments.items %}
-        <a href="{% url 'dep_recipes' dep.name %}">
-            <div class="card recipes__card">
-                <img src={{ img }} class="card-img-top" alt="recipe">
-                <div class="card-body">
-                    <h5 class="card-text">{{ dep }}</h5>
+        <div class="recipe__wrapp">
+            <a href="{% url 'dep_recipes' dep.name %}">
+                <div class="card recipes__card">
+                    <img src={{ img }} class="card-img-top" alt="recipe">
+                    <div class="card-body">
+                        <h5 class="card-text">{{ dep }}</h5>
+                    </div>
                 </div>
-            </div>
-        </a>
+            </a>
+        </div>
         {% endfor %}
     </div>
 </div>

@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load new_tags %}
+
 {% block add_css %}
 <link rel="stylesheet" href="{% static 'yummy/css/style.css' %}">
 {% endblock %}
@@ -8,19 +10,16 @@
 
 {% block content %}
 
+<div class="breadcrumb-wrapp">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Домашняя страница</a></li>
+        <li class="breadcrumb-item active">{{ title }}</li>
+    </ol>
+</div>
+
 <div class="form-container container">
-
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-dismissible alert-danger">
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        <strong>{{ message }}</strong>
-    </div>
-    {% endfor %}
-    {% endif %}
-
     <hr>
-    <div class="form-title">
+    <div class="form-title mb-4">
         <h3><strong>Изменение профиля</strong></h3>
     </div>
 
@@ -33,7 +32,11 @@
         {% for field in user_form %}
         <div class="form-group">
             <label class="col-form-label mt-1">{{ field.label_tag }}</label>
+            {% if field.errors %}
+            {{ field | add_attr:'is-invalid' }}
+            {% else %}
             {{ field }}
+            {% endif %}
             {{ field.errors }}
         </div>
         {% endfor %}
@@ -43,12 +46,20 @@
         {% for field in profile_form %}
         <div class="form-group">
             <label class="col-form-label mt-1">{{ field.label_tag }}</label>
+            {% if field.errors %}
+            {{ field | add_attr:'is-invalid' }}
+            {% else %}
             {{ field }}
+            {% endif %}
             {{ field.errors }}
         </div>
         {% endfor %}
-
-        <button class="btn btn-primary" type="submit">Обновить</button>
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit">Обновить</button>
+        </div>
+        <div class="form-group">
+            <a class="btn btn-warning ml-4" href="{% url 'change_password' %}">Изменить пароль</a>
+        </div>
     </form>
 </div>
 

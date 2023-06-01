@@ -1,7 +1,7 @@
-from django.contrib.auth.models import User
 from django.db import models
-from django.core.validators import MinLengthValidator
-from django.core.files.storage import FileSystemStorage
+import uuid
+from django.core.validators import MinLengthValidator, MaxValueValidator, MinValueValidator, MaxLengthValidator, \
+    validate_image_file_extension
 from enumchoicefield import ChoiceEnum, EnumChoiceField
 from django.urls import reverse
 from transliterate import slugify
@@ -9,12 +9,13 @@ from transliterate import slugify
 from user.models import Profile
 
 RATING_CHOICES = [
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4),
-        (5, 5),
-    ]
+    (0, 0),
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 4),
+    (5, 5),
+]
 
 
 class CuisineType(ChoiceEnum):
@@ -57,27 +58,28 @@ class ProductQuantity(ChoiceEnum):
     TBL_S = 'ст. л.'
     PC = 'шт.'
     TST = 'по вкусу'
+    BN = 'банк.'
+    UP = 'уп.'
 
 
 class GoodsType(ChoiceEnum):
-    M = 'Мясо и птица'
-    F = 'Рыба'
-    V = 'Овощи'
-    EG = 'Яйца'
-    FR = 'Ягоды и фрукты'
     P = 'Крупы и макароны'
-    SP = 'Специи'
-    SS = 'Соусы'
     ML = 'Молочные продукты'
     B = 'Мука и ингредиенты для выпечки'
+    M = 'Мясо и птица'
     D = 'Напитки'
+    V = 'Овощи'
     N = 'Орехи и сухофрукты'
+    F = 'Рыба'
+    SS = 'Соусы'
+    SP = 'Специи'
+    FR = 'Ягоды и фрукты'
+    EG = 'Яйца'
 
 
 class Goods(models.Model):
-    name = models.CharField(max_length=50, unique=True, validators=[MinLengthValidator(3)],
-                            error_messages={'unique': 'Продукт с таким названием уже существует'},
-                            verbose_name='Название продукта')
+    name = models.CharField(max_length=50, unique=True, verbose_name='Название продукта',
+                            error_messages={'unique': 'Продукт с таким названием уже существует.'})
     type = EnumChoiceField(GoodsType, default=GoodsType.V, verbose_name='Тип продукта')
 
     def __str__(self):
@@ -89,24 +91,26 @@ class Goods(models.Model):
     class Meta:
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
-        ordering = ('type',)
+        ordering = ('name',)
 
 
 class Recipe(models.Model):
     """A class for presenting a recipe"""
 
-    name = models.CharField(max_length=100, validators=[MinLengthValidator(2)], verbose_name='Название')
-    image = models.ImageField(upload_to='recipes/', verbose_name='Фотография')
-    slug = models.SlugField(null=False, unique=True)
+    name = models.CharField(max_length=150, verbose_name='Название')
+    image = models.ImageField(upload_to='recipes/', validators=[validate_image_file_extension],
+                              verbose_name='Фотография готового блюда')
+    slug = models.SlugField(max_length=150, null=False, unique=True)
     date = models.DateTimeField(auto_now_add=True, verbose_name='Дата публикации')
     time = models.PositiveIntegerField(default=0, verbose_name='Время приготовления')
-    description = models.TextField(verbose_name='Приготовление')
-    author = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Автор')
-    ingredients = models.ManyToManyField(Goods, default='', through='Ingredient', through_fields=['recipe', 'ingredient'],
+    description = models.TextField(max_length=4000, verbose_name='Приготовление')
+    author = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, verbose_name='Автор')
+    ingredients = models.ManyToManyField(Goods, through='Ingredient', through_fields=['recipe', 'ingredient'],
                                          verbose_name='Ингредиент')
     cuisine = EnumChoiceField(CuisineType, blank=True, verbose_name='Кухня')
     department = EnumChoiceField(DepartmentType, default=DepartmentType.soups, verbose_name='Тип блюда')
-    liked_by = models.ManyToManyField(Profile, related_name='liked_recipes')
+    liked_by = models.ManyToManyField(Profile, related_name='liked_recipes',
+                                      verbose_name='Пользователи, сохранившие рецепт')
 
     def __str__(self):
         return self.name
@@ -116,41 +120,47 @@ class Recipe(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            slug = slugify(f'{self.name}') + f'{uuid.uuid1()}'
+            self.slug = slug
         return super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
-        ordering = ('date', 'name')
+        ordering = ('-date', 'name')
 
 
 class Ingredient(models.Model):
     """A class for presenting an ingredient"""
 
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
     ingredient = models.ForeignKey(Goods, on_delete=models.PROTECT, verbose_name='Ингредиент')
-    quantity = models.PositiveIntegerField(default=1, verbose_name='Количество')
+    quantity = models.FloatField(default=1,
+                                 validators=[MaxValueValidator(limit_value=1000,
+                                                               message='Количество слишком большое'),
+                                             MinValueValidator(limit_value=0.01,
+                                                               message='Количество слишком маленькое')],
+                                 verbose_name='Количество')
     quantity_type = EnumChoiceField(ProductQuantity, default=ProductQuantity.GR, verbose_name='Единицы измерения')
 
     def __str__(self):
-        return self.ingredient
+        return self.ingredient.name
 
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
-        ordering = ('ingredient', )
+        ordering = ('ingredient__name', 'recipe__name')
 
 
 class Comments(models.Model):
-
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
     rating = models.IntegerField(choices=RATING_CHOICES, default=0, blank=True, null=True)
     comment_author = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name='Автор комментария')
-    comment = models.TextField(verbose_name='Комментарий')
+    comment = models.TextField(max_length=500, verbose_name='Комментарий')
     date = models.DateTimeField(auto_now_add=True, verbose_name='Дата публикации')
 
     class Meta:
         unique_together = ('recipe', 'comment_author')
-
-
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+        ordering = ('-date',)

@@ -7,9 +7,17 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+
+<div class="breadcrumb-wrapp">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Домашняя страница</a></li>
+        <li class="breadcrumb-item active">{{ title }}</li>
+    </ol>
+</div>
+
 <div class="form-container container">
     <hr>
-    <div class="form-title">
+    <div class="form-title mb-4">
         <h3>{{ title }}</h3>
     </div>
 
@@ -18,15 +26,9 @@
 
         {{ form.management_form }}
         {{ form.non_form_errors }}
+        {{ form.as_p }}
 
-        {% for field in form %}
-        <div class="form-group">
-            <label class="col-form-label mt-1">{{ field.label_tag }}</label>
-            {{ field.errors }}
-            {{ field }}
-        </div>
-        {% endfor %}
-            <button class="btn btn-primary" type="submit" style="margin-top: 18px;">Регистрация</button>
+        <button class="btn btn-primary" type="submit" style="margin-top: 18px;">Регистрация</button>
     </form>
 </div>
 
