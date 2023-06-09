@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os.path
+from datetime import timedelta
 from pathlib import Path
 from decouple import config
 
@@ -110,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-RU'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -123,8 +124,6 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static/',
-    BASE_DIR / 'yummy/static/',
-    BASE_DIR / 'user/static/',
 ]
 
 MEDIA_URL = '/media/'
@@ -135,3 +134,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

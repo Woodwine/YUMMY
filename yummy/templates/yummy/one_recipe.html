@@ -65,6 +65,8 @@
                 <button class="add-button" type="submit"></button>
                 {% endif %}
             </form>
+            {% elif not request.user.is_authenticated %}
+            <a class="add-button" href="{% url 'login' %}"></a>
             {% endif %}
         </div>
     </div>
