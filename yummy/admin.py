@@ -1,10 +1,7 @@
 from django.contrib import admin
 from enumchoicefield.admin import EnumListFilter
 
-from .models import Ingredient, Recipe, Goods, Comments, GoodsType
-
-
-# Register your models here.
+from .models import Ingredient, Recipe, Goods, Comments
 
 
 @admin.register(Recipe)

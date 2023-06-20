@@ -1,5 +1,4 @@
-from django.template.defaulttags import url
-from django.urls import path, re_path
+from django.urls import path
 from . import views
 
 urlpatterns = [
@@ -14,7 +13,7 @@ urlpatterns = [
     path('goods/update/<int:pk>', views.UpdateGoodsView.as_view(), name='update_product'),
     path('recipes/add', views.add_recipe, name='add_recipe'),
     path('recipes/<slug:slug>', views.OneRecipeView.as_view(), name='recipe-details'),
-    path('update_recipe/<int:pk>', views.update_recipe, name='update_recipe'),
+    path('update_recipe/<int:pk>', views.update_or_delete_recipe, name='update_recipe'),
     path('add_favourite_recipe/', views.add_favourite_recipe, name='add_favourite_recipe'),
     path('add_comment/', views.add_comment, name='add_comment'),
     path('search/', views.SearchView.as_view(), name='search_results'),

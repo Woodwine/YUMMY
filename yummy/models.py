@@ -1,7 +1,6 @@
 from django.db import models
 import uuid
-from django.core.validators import MinLengthValidator, MaxValueValidator, MinValueValidator, MaxLengthValidator, \
-    validate_image_file_extension
+from django.core.validators import MaxValueValidator, MinValueValidator, validate_image_file_extension
 from enumchoicefield import ChoiceEnum, EnumChoiceField
 from django.urls import reverse
 from transliterate import slugify

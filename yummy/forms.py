@@ -1,6 +1,5 @@
 from django import forms
-from django.core.validators import MinLengthValidator, MaxLengthValidator, MaxValueValidator, MinValueValidator, \
-    validate_integer, validate_image_file_extension
+from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.forms import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 

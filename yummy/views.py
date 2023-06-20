@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from .models import Recipe, Ingredient, Goods, CuisineType, DepartmentType, GoodsType, Comments
 from .forms import AddProduct, AddRecipe, IngredientFormSet, AddComment
-from django.views.generic.edit import CreateView, UpdateView, DeletionMixin, FormView
+from django.views.generic.edit import CreateView, UpdateView, DeletionMixin
 from django.views.generic.base import TemplateView
 from django.contrib import messages
 from django.db import transaction
@@ -14,7 +14,9 @@ from .utils import CUISINE_INFO, DEP_INFO, MENU
 
 
 class HomePageView(TemplateView):
-    # Home page
+    """
+    Home page.
+    """
     template_name = 'yummy/home.html'
 
     def get_context_data(self, **kwargs):
@@ -28,7 +30,9 @@ class HomePageView(TemplateView):
 
 
 class AllRecipesView(ListView):
-    # List of all recipes
+    """
+    List of all recipes.
+    """
     context_object_name = 'all_recipes'
     model = Recipe
     template_name = 'yummy/recipes.html'
@@ -48,7 +52,9 @@ class AllRecipesView(ListView):
 
 
 class AllCuisinesView(TemplateView):
-    # List of all recipes
+    """
+    List of all cuisines.
+    """
     template_name = 'yummy/cuisines.html'
 
     def get_context_data(self, **kwargs):
@@ -60,7 +66,9 @@ class AllCuisinesView(TemplateView):
 
 
 class AllDepartmentsView(TemplateView):
-    # List of all recipes
+    """
+    List of all departments.
+    """
     template_name = 'yummy/departments.html'
 
     def get_context_data(self, **kwargs):
@@ -72,6 +80,9 @@ class AllDepartmentsView(TemplateView):
 
 
 class DepartmentRecipesView(ListView):
+    """
+    List of all recipes for each department.
+    """
     model = Recipe
     template_name = 'yummy/dep_recipes.html'
     paginate_by = 12
@@ -92,6 +103,9 @@ class DepartmentRecipesView(ListView):
 
 
 class CuisineRecipesView(ListView):
+    """
+    List of all recipes for each cuisine.
+    """
     model = Recipe
     template_name = 'yummy/cuisine_recipes.html'
     paginate_by = 12
@@ -114,7 +128,9 @@ class CuisineRecipesView(ListView):
 
 
 class AllGoodsView(ListView):
-    # List of all goods
+    """
+    List of all goods.
+    """
     model = Goods
     template_name = 'yummy/goods.html'
 
@@ -127,7 +143,9 @@ class AllGoodsView(ListView):
 
 
 class AddGoodsView(SuccessMessageMixin, CreateView):
-    # Add one product
+    """
+    Add one product.
+    """
     model = Goods
     form_class = AddProduct
     template_name = 'yummy/add_product.html'
@@ -142,7 +160,9 @@ class AddGoodsView(SuccessMessageMixin, CreateView):
 
 
 class UpdateGoodsView(DeletionMixin, SuccessMessageMixin, UpdateView):
-    # Update one product
+    """
+    Update one product.
+    """
     model = Goods
     form_class = AddProduct
     template_name = 'yummy/update_product.html'
@@ -157,7 +177,9 @@ class UpdateGoodsView(DeletionMixin, SuccessMessageMixin, UpdateView):
 
 
 class OneRecipeView(DeletionMixin, SuccessMessageMixin, DetailView):
-    # One recipe with details
+    """
+    One recipe with details
+    """
     template_name = 'yummy/one_recipe.html'
     model = Recipe
     success_url = reverse_lazy('profile')
@@ -177,7 +199,8 @@ class OneRecipeView(DeletionMixin, SuccessMessageMixin, DetailView):
         context['ingredients'] = Ingredient.objects.filter(recipe=self.object.id)
         comments = Comments.objects.filter(recipe=self.object.id)
 
-        if self.request.user.is_authenticated and comments.filter(comment_author=self.request.user.profile).count() == 0:
+        if self.request.user.is_authenticated and comments.filter(
+                comment_author=self.request.user.profile).count() == 0:
             context['comment_form'] = AddComment
 
         context['comments'] = comments
@@ -197,6 +220,9 @@ class OneRecipeView(DeletionMixin, SuccessMessageMixin, DetailView):
 
 @login_required
 def add_comment(request):
+    """
+    Add a new comment.
+    """
     comment_form = AddComment(request.POST)
     rating = request.POST.get('selected_rating', 0)
     recipe = get_object_or_404(Recipe, name=request.POST.get('recipe'))
@@ -219,6 +245,9 @@ def add_comment(request):
 
 @login_required
 def add_favourite_recipe(request):
+    """
+    Add a recipe to the list with favourite recipes.
+    """
     path = request.META.get('HTTP_REFERER', '/')
     if request.method == 'POST':
         recipe = get_object_or_404(Recipe, name=request.POST.get('recipe'))
@@ -232,6 +261,9 @@ def add_favourite_recipe(request):
 
 
 def add_recipe(request):
+    """
+    Create a new recipe.
+    """
     if request.user.is_authenticated:
         if request.method == 'POST':
             recipe_form = AddRecipe(request.POST or None, request.FILES or None)
@@ -258,7 +290,10 @@ def add_recipe(request):
         return redirect('login')
 
 
-def update_recipe(request, pk):
+def update_or_delete_recipe(request, pk):
+    """
+    Update or delete a recipe.
+    """
     if request.user.is_authenticated:
         return_path = request.GET.get('next') if request.GET.get('next') else ''
         recipe = get_object_or_404(Recipe, id=pk)
@@ -298,6 +333,9 @@ def update_recipe(request, pk):
 
 
 class SearchView(ListView):
+    """
+    Site search using keywords.
+    """
     model = Recipe
     template_name = 'yummy/search_results.html'
     paginate_by = 12
@@ -305,8 +343,10 @@ class SearchView(ListView):
     def get_queryset(self):
         query = self.request.GET.get('q')
         if query:
-            cus = [CuisineType[i] for i in CuisineType._member_names_ if query.lower() in CuisineType[i].verbose_name.lower()]
-            dep = [DepartmentType[i] for i in DepartmentType._member_names_ if query.lower() in DepartmentType[i].verbose_name.lower()]
+            cus = [CuisineType[i] for i in CuisineType._member_names_ if
+                   query.lower() in CuisineType[i].verbose_name.lower()]
+            dep = [DepartmentType[i] for i in DepartmentType._member_names_ if
+                   query.lower() in DepartmentType[i].verbose_name.lower()]
             object_list = Recipe.objects.filter(
                 Q(name__icontains=query) | Q(cuisine__in=cus) | Q(department__in=dep))
             return object_list
@@ -319,4 +359,3 @@ class SearchView(ListView):
         context['title'] = 'Результат поиска'
         context['menu'] = MENU
         return context
-
