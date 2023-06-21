@@ -167,7 +167,8 @@ body {
 .form-select option {
     -webkit-appearance: none !important;
      background-color: var(--yellow) !important;
- }
+}
+
 
 .alert-light {
     background: #ffe7b3;

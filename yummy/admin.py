@@ -1,5 +1,4 @@
 from django.contrib import admin
-from enumchoicefield.admin import EnumListFilter
 
 from .models import Ingredient, Recipe, Goods, Comments
 
@@ -8,14 +7,14 @@ from .models import Ingredient, Recipe, Goods, Comments
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ['name', 'author', 'date', 'cuisine', 'department']
     search_fields = ['name', 'author__user__username']
-    list_filter = [('cuisine', EnumListFilter), ('department', EnumListFilter)]
+    list_filter = ['cuisine', 'department']
 
 
 @admin.register(Goods)
 class GoodsAdmin(admin.ModelAdmin):
     list_display = ['name', 'type']
     search_fields = ['name']
-    list_filter = ['name', ('type', EnumListFilter)]
+    list_filter = ['name', 'type']
 
 
 @admin.register(Ingredient)

@@ -17,13 +17,13 @@
         <h3><strong>{{ title }}</strong></h3>
     </div>
     <div class="recipes__wrapp">
-        {% for dep, img in all_departments.items %}
+        {% for key, value, img in all_departments %}
         <div class="recipe__wrapp">
-            <a href="{% url 'dep_recipes' dep.name %}">
+            <a href="{% url 'dep_recipes' key %}">
                 <div class="card recipes__card">
                     <img src={{ img }} class="card-img-top" alt="recipe">
                     <div class="card-body">
-                        <h5 class="card-text">{{ dep }}</h5>
+                        <h5 class="card-text">{{ value }}</h5>
                     </div>
                 </div>
             </a>

@@ -1,7 +1,6 @@
 from django.db import models
 import uuid
 from django.core.validators import MaxValueValidator, MinValueValidator, validate_image_file_extension
-from enumchoicefield import ChoiceEnum, EnumChoiceField
 from django.urls import reverse
 from transliterate import slugify
 
@@ -16,76 +15,76 @@ RATING_CHOICES = [
     (5, 5),
 ]
 
+GOODS_TYPE = [
+    ('P', 'Крупы и макароны'),
+    ('ML', 'Молочные продукты'),
+    ('B', 'Мука и ингредиенты для выпечки'),
+    ('M', 'Мясо и птица'),
+    ('D', 'Напитки'),
+    ('V', 'Овощи'),
+    ('N', 'Орехи и сухофрукты'),
+    ('F', 'Рыба'),
+    ('SS', 'Соусы'),
+    ('SP', 'Специи'),
+    ('FR', 'Ягоды и фрукты'),
+    ('EG', 'Яйца'),
+]
 
-class CuisineType(ChoiceEnum):
-    russia = 'Русская кухня'
-    france = 'Французская кухня'
-    georgia = 'Грузинская кухня'
-    italia = 'Итальянская кухня'
-    japan = 'Японская кухня'
-    india = 'Индийская кухня'
-    china = 'Китайская кухня'
-    asia = 'Азиатская кухня'
-    mexico = 'Мексиканская кухня'
-    europe = 'Европейская кухня'
-    caucasus = 'Кавказская кухня'
-    uzbekistan = 'Узбекская кухня'
-    turkey = 'Турецкая кухня'
-    america = 'Американская кухня'
-    spain = 'Испанская кухня'
-    greece = 'Греческая кухня'
+CUISINE_TYPE = [
+    ('russia', 'Русская кухня'),
+    ('france', 'Французская кухня'),
+    ('georgia', 'Грузинская кухня'),
+    ('italia', 'Итальянская кухня'),
+    ('japan', 'Японская кухня'),
+    ('india', 'Индийская кухня'),
+    ('china', 'Китайская кухня'),
+    ('asia', 'Азиатская кухня'),
+    ('mexico', 'Мексиканская кухня'),
+    ('europe', 'Европейская кухня'),
+    ('caucasus', 'Кавказская кухня'),
+    ('uzbekistan', 'Узбекская кухня'),
+    ('turkey', 'Турецкая кухня'),
+    ('america', 'Американская кухня'),
+    ('spain', 'Испанская кухня'),
+    ('greece', 'Греческая кухня')
+]
 
+DEPARTMENT_TYPE = [
+    ('salads', 'Салаты'),
+    ('soups', 'Первые блюда'),
+    ('main_dishes', 'Вторые блюда'),
+    ('snacks', 'Закуски'),
+    ('bakery', 'Выпечка'),
+    ('desserts', 'Десерты'),
+    ('drinks', 'Напитки'),
+    ('sauces', 'Соусы'),
+    ('canned', 'Заготовки на зиму'),
+]
 
-class DepartmentType(ChoiceEnum):
-    salads = 'Салаты'
-    soups = 'Первые блюда'
-    main_dishes = 'Вторые блюда'
-    snacks = 'Закуски'
-    bakery = 'Выпечка'
-    desserts = 'Десерты'
-    drinks = 'Напитки'
-    sauces = 'Соусы'
-    canned = 'Заготовки на зиму'
-
-
-class ProductQuantity(ChoiceEnum):
-    KG = 'кг.'
-    GR = 'гр.'
-    L = 'л.'
-    ML = 'мл.'
-    TEA_S = 'ч. л.'
-    TBL_S = 'ст. л.'
-    PC = 'шт.'
-    TST = 'по вкусу'
-    BN = 'банк.'
-    UP = 'уп.'
-
-
-class GoodsType(ChoiceEnum):
-    P = 'Крупы и макароны'
-    ML = 'Молочные продукты'
-    B = 'Мука и ингредиенты для выпечки'
-    M = 'Мясо и птица'
-    D = 'Напитки'
-    V = 'Овощи'
-    N = 'Орехи и сухофрукты'
-    F = 'Рыба'
-    SS = 'Соусы'
-    SP = 'Специи'
-    FR = 'Ягоды и фрукты'
-    EG = 'Яйца'
+PRODUCT_QUANTITY = [
+    ('KG', 'кг.'),
+    ('GR', 'гр.'),
+    ('L', 'л.'),
+    ('ML', 'мл.'),
+    ('TEA_S', 'ч. л.'),
+    ('TBL_S', 'ст. л.'),
+    ('PC', 'шт.'),
+    ('TST', 'по вкусу'),
+    ('BN', 'банк.'),
+    ('UP', 'уп.'),
+]
 
 
 class Goods(models.Model):
     name = models.CharField(max_length=50, unique=True, verbose_name='Название продукта',
                             error_messages={'unique': 'Продукт с таким названием уже существует.'})
-    type = EnumChoiceField(GoodsType, default=GoodsType.V, verbose_name='Тип продукта')
+    type = models.CharField(choices=GOODS_TYPE, default='P', verbose_name='Тип продукта')
 
     def __str__(self):
         return self.name
 
     def get_url(self):
-        return reverse('product-details', args=[self.id])
+        return reverse('product-details', args=[self.pk])
 
     class Meta:
         verbose_name = 'Продукт'
@@ -106,8 +105,8 @@ class Recipe(models.Model):
     author = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, verbose_name='Автор')
     ingredients = models.ManyToManyField(Goods, through='Ingredient', through_fields=['recipe', 'ingredient'],
                                          verbose_name='Ингредиент')
-    cuisine = EnumChoiceField(CuisineType, blank=True, verbose_name='Кухня')
-    department = EnumChoiceField(DepartmentType, default=DepartmentType.soups, verbose_name='Тип блюда')
+    cuisine = models.CharField(choices=CUISINE_TYPE, default='russia', verbose_name='Кухня')
+    department = models.CharField(choices=DEPARTMENT_TYPE, default='soups', verbose_name='Тип блюда')
     liked_by = models.ManyToManyField(Profile, related_name='liked_recipes',
                                       verbose_name='Пользователи, сохранившие рецепт')
 
@@ -119,7 +118,7 @@ class Recipe(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            slug = slugify(f'{self.name}') + f'{uuid.uuid1()}'
+            slug = slugify(f'{self.name}') + '-' + f'{self.pk}'
             self.slug = slug
         return super().save(*args, **kwargs)
 
@@ -140,7 +139,7 @@ class Ingredient(models.Model):
                                              MinValueValidator(limit_value=0.01,
                                                                message='Количество слишком маленькое')],
                                  verbose_name='Количество')
-    quantity_type = EnumChoiceField(ProductQuantity, default=ProductQuantity.GR, verbose_name='Единицы измерения')
+    quantity_type = models.CharField(choices=PRODUCT_QUANTITY, default='GR', verbose_name='Единицы измерения')
 
     def __str__(self):
         return self.ingredient.name
@@ -152,6 +151,7 @@ class Ingredient(models.Model):
 
 
 class Comments(models.Model):
+
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
     rating = models.IntegerField(choices=RATING_CHOICES, default=0, blank=True, null=True)
     comment_author = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name='Автор комментария')

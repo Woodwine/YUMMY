@@ -36,11 +36,11 @@
             {% endfor %}
         </div>
         <div class="info-about">
-            {{ recipe.department }}
+            {{ recipe.get_department_display }}
         </div>
         {% if recipe.cuisine %}
         <div class="info-about">
-            {{ recipe.cuisine }}
+            {{ recipe.get_cuisine_display }}
         </div>
         {% endif %}
         <div class="info-about">
@@ -85,7 +85,7 @@
             <div class="ingredient">
                 <span>{{ ingredient.ingredient.name | capfirst }}</span>
                 <div class="ingredient-line"></div>
-                <span>{{ ingredient.quantity | floatformat }}&nbsp;{{ ingredient.quantity_type }}</span>
+                <span>{{ ingredient.quantity | floatformat }}&nbsp;{{ ingredient.get_quantity_type_display }}</span>
             </div>
             {% endfor %}
         </div>

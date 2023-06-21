@@ -3,7 +3,7 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.forms import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
-from .models import Goods, Recipe, Ingredient, GoodsType, CuisineType, DepartmentType, ProductQuantity, Comments
+from .models import Goods, Recipe, Ingredient, Comments, GOODS_TYPE, PRODUCT_QUANTITY, CUISINE_TYPE, DEPARTMENT_TYPE
 
 
 class RecipeImageInput(forms.ClearableFileInput):
@@ -31,11 +31,12 @@ class AddProduct(forms.ModelForm):
             'type': 'Тип продукта'
         }
         widgets = {
-            'type': forms.Select(choices=((i, GoodsType[i]) for i in GoodsType._member_names_),
-                                 attrs={
-                                     'class': 'form-select',
-                                     'id': 'exampleSelect1',
-                                 })
+            'type': forms.Select(
+                choices=GOODS_TYPE,
+                attrs={
+                    'class': 'form-select',
+                    'id': 'exampleSelect1',
+                })
         }
 
     def clean_name(self):
@@ -48,7 +49,6 @@ class AddProduct(forms.ModelForm):
 
 
 class AddIngredient(forms.ModelForm):
-
     class Meta:
         model = Ingredient
         fields = ('ingredient', 'quantity', 'quantity_type')
@@ -68,7 +68,7 @@ class AddIngredient(forms.ModelForm):
                 attrs={'class': 'form-control',
                        'placeholder': 'Введите количество'}),
             'quantity_type': forms.Select(
-                choices=((i, ProductQuantity[i]) for i in ProductQuantity._member_names_),
+                choices=PRODUCT_QUANTITY,
                 attrs={'class': 'form-select',
                        'id': 'exampleSelect4'})
         }
@@ -132,21 +132,23 @@ class AddRecipe(forms.ModelForm):
         }
         widgets = {
             'image': RecipeImageInput(attrs={
-                                 'class': 'form-control',
-                                 'type': "file",
-                                 'id': 'formFile',
-                                 'placeholder': 'Выберите файл'
-                             }),
-            'cuisine': forms.Select(choices=((i, CuisineType[i]) for i in CuisineType._member_names_),
-                                    attrs={
-                                        'class': 'form-select',
-                                        'id': 'exampleSelect2',
-                                    }),
-            'department': forms.Select(choices=((i, DepartmentType[i]) for i in DepartmentType._member_names_),
-                                       attrs={
-                                           'class': 'form-select',
-                                           'id': 'exampleSelect3',
-                                       })
+                'class': 'form-control',
+                'type': "file",
+                'id': 'formFile',
+                'placeholder': 'Выберите файл'
+            }),
+            'cuisine': forms.Select(
+                choices=CUISINE_TYPE,
+                attrs={
+                    'class': 'form-select',
+                    'id': 'exampleSelect2',
+                }),
+            'department': forms.Select(
+                choices=DEPARTMENT_TYPE,
+                attrs={
+                    'class': 'form-select',
+                    'id': 'exampleSelect3',
+                })
         }
         error_messages = {
             'image': {

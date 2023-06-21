@@ -1,6 +1,7 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, PasswordChangeView
+from django.db.models import Avg
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
@@ -66,9 +67,12 @@ class UserPasswordChangeView(PasswordChangeView):
 
 @login_required
 def profile(request):
-    my_recipes = Recipe.objects.filter(author=request.user.profile)
-    my_favourites = Recipe.objects.filter(liked_by=request.user.profile)
-    return render(request, 'user/profile.html', {'menu': MENU, 'my_recipes': my_recipes, 'my_favourites': my_favourites})
+    recipes = Recipe.objects.filter(author=request.user.profile)
+    my_recipes = [{'recipe': i, 'rating': i.comments_set.aggregate(Avg('rating'))['rating__avg']} for i in recipes]
+    favourites = Recipe.objects.filter(liked_by=request.user.profile)
+    my_favourites = [{'recipe': i, 'rating': i.comments_set.aggregate(Avg('rating'))['rating__avg']} for i in favourites]
+    return render(request, 'user/profile.html', {'menu': MENU, 'my_recipes': my_recipes,
+                                                 'my_favourites': my_favourites, 'const_rating': (1, 2, 3, 4, 5)})
 
 
 @login_required

@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% block add_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
 {% block title %}{{ request.user }}{% endblock %}
 
 {% block content %}
@@ -57,13 +59,25 @@
             </div>
             <div class="tab-pane fade recipes__wrapp" id="my_recipes" role="tabpanel">
 
-                {% for recipe in my_recipes %}
+                {% for item in my_recipes %}
                 <div class="recipe__wrapp">
-                    <a href="{{ recipe.get_absolute_url }}">
+                    <a href="{{ item.recipe.get_absolute_url }}">
                         <div class="card recipes__card">
-                            <img src='{{ recipe.image.url }}' class="card-img-top" alt="recipe">
+                            <img src='{{ item.recipe.image.url }}' class="card-img-top" alt="recipe">
                             <div class="card-body">
-                                <h5 class="card-text">{{ recipe | capfirst }}</h5>
+                                <h5 class="card-text">{{ item.recipe | capfirst }}</h5>
+                                <div class="star-rating__wrapp comment-rating card-rating">
+                                    {% if item.rating %}
+                                    {% for i in const_rating %}
+                                    {% if i <= item.rating %}
+                                    <div class="star-wrapp">
+                                        <span class="fa fa-star checked"></span>
+                                    </div>
+                                    {% endif %}
+                                    {% empty %}
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </a>
@@ -76,13 +90,26 @@
 
             </div>
             <div class="tab-pane fade recipes__wrapp" id="my_favourites" role="tabpanel">
-                {% for recipe in my_favourites %}
+                {% for item in my_favourites %}
                 <div class="recipe__wrapp">
-                    <a href="{{ recipe.get_absolute_url }}">
+                    <a href="{{ item.recipe.get_absolute_url }}">
                         <div class="card recipes__card">
-                            <img src='{{ recipe.image.url }}' class="card-img-top" alt="recipe">
+                            <img src='{{ item.recipe.image.url }}' class="card-img-top" alt="recipe">
                             <div class="card-body">
-                                <h5 class="card-text">{{ recipe | capfirst }}</h5>
+                                <h5 class="card-text">{{ item.recipe | capfirst }}</h5>
+                                <img src="{% static 'img/bookmark-small.svg' %}">
+                                <div class="star-rating__wrapp comment-rating card-rating">
+                                    {% if item.rating %}
+                                    {% for i in const_rating %}
+                                    {% if i <= item.rating %}
+                                    <div class="star-wrapp">
+                                        <span class="fa fa-star checked"></span>
+                                    </div>
+                                    {% endif %}
+                                    {% empty %}
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </a>

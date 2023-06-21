@@ -1,10 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q, Avg
+from django.http import HttpResponseNotFound
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
-from .models import Recipe, Ingredient, Goods, CuisineType, DepartmentType, GoodsType, Comments
+from .models import Recipe, Ingredient, Goods, Comments, CUISINE_TYPE, DEPARTMENT_TYPE, GOODS_TYPE
 from .forms import AddProduct, AddRecipe, IngredientFormSet, AddComment
 from django.views.generic.edit import CreateView, UpdateView, DeletionMixin
 from django.views.generic.base import TemplateView
@@ -24,8 +25,8 @@ class HomePageView(TemplateView):
         context['menu'] = MENU
         context['title'] = 'Домашняя страница'
         context['recipes'] = Recipe.objects.all()[:5]
-        context['cuisines'] = {CuisineType[i]: CUISINE_INFO[i][0] for i in CuisineType._member_names_[:5]}
-        context['departments'] = {DepartmentType[i]: DEP_INFO[i] for i in DepartmentType._member_names_[:5]}
+        context['cuisines'] = [(i[0], i[1], CUISINE_INFO[i[0]][0]) for i in CUISINE_TYPE[:5]]
+        context['departments'] = [(i[0], i[1], DEP_INFO[i[0]]) for i in DEPARTMENT_TYPE[:5]]
         return context
 
 
@@ -59,7 +60,7 @@ class AllCuisinesView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['all_cuisines'] = {CuisineType[i]: CUISINE_INFO[i][0] for i in CuisineType._member_names_}
+        context['all_cuisines'] = [(i[0], i[1], CUISINE_INFO[i[0]][0]) for i in CUISINE_TYPE]
         context['title'] = 'Кухни мира'
         context['menu'] = MENU
         return context
@@ -73,7 +74,7 @@ class AllDepartmentsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['all_departments'] = {DepartmentType[i]: DEP_INFO[i] for i in DepartmentType._member_names_}
+        context['all_departments'] = [(i[0], i[1], DEP_INFO[i[0]]) for i in DEPARTMENT_TYPE]
         context['title'] = 'Виды блюд'
         context['menu'] = MENU
         return context
@@ -89,7 +90,7 @@ class DepartmentRecipesView(ListView):
     context_object_name = 'recipes'
 
     def get_context_data(self, **kwargs):
-        dep = DepartmentType[self.kwargs['dep']]
+        dep = [value for key, value in DEPARTMENT_TYPE if key == self.kwargs['dep']][0]
         context = super().get_context_data(**kwargs)
         context['const_rating'] = (1, 2, 3, 4, 5)
         context['title'] = dep
@@ -98,8 +99,10 @@ class DepartmentRecipesView(ListView):
 
     def get_queryset(self):
         recipes = super().get_queryset()
-        dep = DepartmentType[self.kwargs['dep']]
-        return recipes.filter(department=dep)
+        dep = self.kwargs['dep']
+        qs = recipes.filter(department=dep)
+        full_qs = [{'recipe': i, 'rating': i.comments_set.aggregate(Avg('rating'))['rating__avg']} for i in qs]
+        return full_qs
 
 
 class CuisineRecipesView(ListView):
@@ -112,19 +115,21 @@ class CuisineRecipesView(ListView):
     context_object_name = 'cus_recipes'
 
     def get_context_data(self, **kwargs):
-        cus = CuisineType[self.kwargs['cntr']]
+        cus = self.kwargs['cntr']
         context = super().get_context_data(**kwargs)
-        context['info'] = CUISINE_INFO[cus.name][1]
-        context['img'] = CUISINE_INFO[cus.name][0]
+        context['info'] = CUISINE_INFO[cus][1]
+        context['img'] = CUISINE_INFO[cus][0]
         context['const_rating'] = (1, 2, 3, 4, 5)
-        context['title'] = cus
+        context['title'] = [value for key, value in CUISINE_TYPE if key == cus][0]
         context['menu'] = MENU
         return context
 
     def get_queryset(self):
-        cus_recipes = super().get_queryset()
-        cus = CuisineType[self.kwargs['cntr']]
-        return cus_recipes.filter(cuisine=cus)
+        recipes = super().get_queryset()
+        cus = self.kwargs['cntr']
+        qs = recipes.filter(cuisine=cus)
+        full_qs = [{'recipe': i, 'rating': i.comments_set.aggregate(Avg('rating'))['rating__avg']} for i in qs]
+        return full_qs
 
 
 class AllGoodsView(ListView):
@@ -136,7 +141,7 @@ class AllGoodsView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['goods'] = {GoodsType[i]: Goods.objects.filter(type=GoodsType[i]) for i in GoodsType._member_names_}
+        context['goods'] = {i[1]: Goods.objects.filter(type=i[0]) for i in GOODS_TYPE}
         context['title'] = 'Продукты, используемые в рецептах'
         context['menu'] = MENU
         return context
@@ -216,6 +221,8 @@ class OneRecipeView(DeletionMixin, SuccessMessageMixin, DetailView):
             recipe.delete()
             messages.add_message(request, messages.SUCCESS, 'Рецепт успешно  удален!')
             return redirect('profile')
+        else:
+            return HttpResponseNotFound()
 
 
 @login_required
@@ -308,7 +315,6 @@ def update_or_delete_recipe(request, pk):
                 messages.add_message(request, messages.SUCCESS, 'Рецепт успешно  удален!')
                 return redirect('profile')
             else:
-                print('POST')
                 with transaction.atomic():
                     if recipe_form.is_valid() and formset.is_valid():
                         new_recipe = recipe_form.save(commit=False)
@@ -343,10 +349,10 @@ class SearchView(ListView):
     def get_queryset(self):
         query = self.request.GET.get('q')
         if query:
-            cus = [CuisineType[i] for i in CuisineType._member_names_ if
-                   query.lower() in CuisineType[i].verbose_name.lower()]
-            dep = [DepartmentType[i] for i in DepartmentType._member_names_ if
-                   query.lower() in DepartmentType[i].verbose_name.lower()]
+            cus = [i[1] for i in CUISINE_TYPE if
+                   query.lower() in i[1].lower()]
+            dep = [i[1] for i in DEPARTMENT_TYPE if
+                   query.lower() in i[1].lower()]
             object_list = Recipe.objects.filter(
                 Q(name__icontains=query) | Q(cuisine__in=cus) | Q(department__in=dep))
             return object_list
