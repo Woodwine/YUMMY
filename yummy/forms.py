@@ -81,6 +81,12 @@ class AddIngredient(forms.ModelForm):
             }
         }
 
+    def clean_ingredient(self):
+        ingt = self.cleaned_data.get('ingredient')
+        if ingt == '' or ingt is None:
+            raise forms.ValidationError(_('Поле не может быть пустым'))
+        return ingt
+
 
 IngredientFormSet = inlineformset_factory(Recipe, Ingredient, form=AddIngredient,
                                           fields=('ingredient', 'quantity', 'quantity_type'), extra=1,
