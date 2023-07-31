@@ -75,6 +75,8 @@ PRODUCT_QUANTITY = [
 
 
 class Goods(models.Model):
+    """Represents a product consisting name and product type"""
+
     name = models.CharField(max_length=50, unique=True, verbose_name='Название продукта',
                             error_messages={'unique': 'Продукт с таким названием уже существует.'})
     type = models.CharField(choices=GOODS_TYPE, default='P', verbose_name='Тип продукта')
@@ -92,7 +94,11 @@ class Goods(models.Model):
 
 
 class Recipe(models.Model):
-    """A class for presenting a recipe"""
+    """
+    Represents a recipe consisting recipe name, photo of dish, slug, date of creation,
+    cooking time, description, recipe author, ingredients of dish, cuisine type, dish type
+    and users, who liked this recipe
+    """
 
     name = models.CharField(max_length=150, verbose_name='Название')
     image = models.ImageField(upload_to='recipes/', validators=[validate_image_file_extension],
@@ -128,7 +134,7 @@ class Recipe(models.Model):
 
 
 class Ingredient(models.Model):
-    """A class for presenting an ingredient"""
+    """Represents a dish ingredient consisting of product, quantity and unit of measurement"""
 
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
     ingredient = models.ForeignKey(Goods, on_delete=models.PROTECT, verbose_name='Ингредиент')
@@ -150,6 +156,10 @@ class Ingredient(models.Model):
 
 
 class Comments(models.Model):
+    """
+    Represents a user comment of the dish consisting of commented recipe,
+    rating, comment author, text of comment, date of comment
+    """
 
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
     rating = models.IntegerField(choices=RATING_CHOICES, default=0, blank=True, null=True)

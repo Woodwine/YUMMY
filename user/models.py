@@ -3,6 +3,10 @@ from django.db import models
 
 
 class Profile(models.Model):
+    """
+    Represents a profile information of user consisting user, date of user birth, user photo
+    """
+
     user = models.OneToOneField(User, verbose_name='Пользователь', on_delete=models.CASCADE)
     date_of_birth = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
     photo = models.ImageField(upload_to='users/', default='users/user.svg', verbose_name='Фотография профиля')

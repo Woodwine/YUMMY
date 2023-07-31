@@ -13,6 +13,8 @@ class RecipeImageInput(forms.ClearableFileInput):
 
 
 class AddProduct(forms.ModelForm):
+    """Adds a new product to product list"""
+
     name = forms.CharField(max_length=100, required=False, label='Название продукта',
                            widget=forms.TextInput(attrs={
                                'class': 'form-control',
@@ -49,6 +51,8 @@ class AddProduct(forms.ModelForm):
 
 
 class AddIngredient(forms.ModelForm):
+    """ Adds a new ingredient consisting of product, quantity and unit of measurement"""
+
     class Meta:
         model = Ingredient
         fields = ('ingredient', 'quantity', 'quantity_type')
@@ -88,6 +92,7 @@ class AddIngredient(forms.ModelForm):
         return ingt
 
 
+# Formset_factory for adding more ingredients
 IngredientFormSet = inlineformset_factory(Recipe, Ingredient, form=AddIngredient,
                                           fields=('ingredient', 'quantity', 'quantity_type'), extra=1,
                                           max_num=1, validate_max=False, can_delete=True, can_delete_extra=True,
@@ -95,6 +100,8 @@ IngredientFormSet = inlineformset_factory(Recipe, Ingredient, form=AddIngredient
 
 
 class AddRecipe(forms.ModelForm):
+    """Adds a new recipe consisting of name, description, photo of dish, cooking time, cuisine type, type of dish """
+
     name = forms.CharField(max_length=150, label='Название рецепта', required=False,
                            widget=forms.TextInput(attrs={
                                'class': 'form-control',
@@ -192,6 +199,8 @@ class AddRecipe(forms.ModelForm):
 
 
 class AddComment(forms.ModelForm):
+    """ Adds a new comment to the recipe"""
+
     comment = forms.CharField(max_length=500, required=False, label='Комментарий',
                               widget=forms.TextInput(attrs={
                                   'class': 'form-control',

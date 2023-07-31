@@ -14,6 +14,10 @@ from yummy.utils import MENU
 
 
 class RegisterUser(CreateView):
+    """
+    Registers a new user in the system
+    """
+
     form_class = RegisterUserForm
     template_name = 'user/register_user.html'
 
@@ -31,6 +35,10 @@ class RegisterUser(CreateView):
 
 
 class LoginUser(LoginView):
+    """
+    Logs the user in the system
+    """
+
     form_class = LoginUserForm
     template_name = 'user/login_user.html'
 
@@ -46,11 +54,19 @@ class LoginUser(LoginView):
 
 
 def logout_user(request):
+    """
+    Logs the user out the system
+    """
+
     logout(request)
     return redirect('home')
 
 
 class UserPasswordChangeView(PasswordChangeView):
+    """
+    Changes the user password
+    """
+
     form_class = UserPasswordChangeForm
     template_name = 'user/change_password.html'
 
@@ -67,6 +83,10 @@ class UserPasswordChangeView(PasswordChangeView):
 
 @login_required
 def profile(request):
+    """
+    Represents a user profile with user favorites recipes, own recipes and profile information
+    """
+
     recipes = Recipe.objects.filter(author=request.user.profile)
     my_recipes = [{'recipe': i, 'rating': i.comments_set.aggregate(Avg('rating'))['rating__avg']} for i in recipes]
     favourites = Recipe.objects.filter(liked_by=request.user.profile)
@@ -77,6 +97,9 @@ def profile(request):
 
 @login_required
 def edit(request):
+    """
+    Edits user information and profile information
+    """
     menu = MENU
 
     if request.method == 'POST':

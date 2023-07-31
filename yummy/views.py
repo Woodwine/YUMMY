@@ -16,7 +16,7 @@ from .utils import CUISINE_INFO, DEP_INFO, MENU
 
 class HomePageView(TemplateView):
     """
-    Home page.
+    Represents a home page
     """
     template_name = 'yummy/home.html'
 
@@ -32,7 +32,7 @@ class HomePageView(TemplateView):
 
 class AllRecipesView(ListView):
     """
-    List of all recipes.
+    Represents a list of all recipes.
     """
     context_object_name = 'all_recipes'
     model = Recipe
@@ -54,8 +54,9 @@ class AllRecipesView(ListView):
 
 class AllCuisinesView(TemplateView):
     """
-    List of all cuisines.
+    Represents a list of all cuisine types.
     """
+
     template_name = 'yummy/cuisines.html'
 
     def get_context_data(self, **kwargs):
@@ -68,7 +69,7 @@ class AllCuisinesView(TemplateView):
 
 class AllDepartmentsView(TemplateView):
     """
-    List of all departments.
+    Represents a list of all types of dishes.
     """
     template_name = 'yummy/departments.html'
 
@@ -82,8 +83,9 @@ class AllDepartmentsView(TemplateView):
 
 class DepartmentRecipesView(ListView):
     """
-    List of all recipes for each department.
+    Represents a list of all recipes for each dish type.
     """
+
     model = Recipe
     template_name = 'yummy/dep_recipes.html'
     paginate_by = 12
@@ -107,7 +109,7 @@ class DepartmentRecipesView(ListView):
 
 class CuisineRecipesView(ListView):
     """
-    List of all recipes for each cuisine.
+    Represents a list of all recipes for each cuisine type.
     """
     model = Recipe
     template_name = 'yummy/cuisine_recipes.html'
@@ -134,7 +136,7 @@ class CuisineRecipesView(ListView):
 
 class AllGoodsView(ListView):
     """
-    List of all goods.
+    Represents a list of all products used for cooking.
     """
     model = Goods
     template_name = 'yummy/goods.html'
@@ -149,7 +151,7 @@ class AllGoodsView(ListView):
 
 class AddGoodsView(SuccessMessageMixin, CreateView):
     """
-    Add one product.
+    Creates a new product. Can only be used by staff.
     """
     model = Goods
     form_class = AddProduct
@@ -166,7 +168,7 @@ class AddGoodsView(SuccessMessageMixin, CreateView):
 
 class UpdateGoodsView(DeletionMixin, SuccessMessageMixin, UpdateView):
     """
-    Update one product.
+    Updates an existing product. Can only be used by staff.
     """
     model = Goods
     form_class = AddProduct
@@ -183,8 +185,9 @@ class UpdateGoodsView(DeletionMixin, SuccessMessageMixin, UpdateView):
 
 class OneRecipeView(DeletionMixin, SuccessMessageMixin, DetailView):
     """
-    One recipe with details
+    Represents an existing recipe. Be used also for deleting the recipe by its creator or by staff.
     """
+
     template_name = 'yummy/one_recipe.html'
     model = Recipe
     success_url = reverse_lazy('profile')
@@ -228,7 +231,7 @@ class OneRecipeView(DeletionMixin, SuccessMessageMixin, DetailView):
 @login_required
 def add_comment(request):
     """
-    Add a new comment.
+    Add a new comment and rating for recipe
     """
     comment_form = AddComment(request.POST)
     rating = request.POST.get('selected_rating', 0)
@@ -253,8 +256,9 @@ def add_comment(request):
 @login_required
 def add_favourite_recipe(request):
     """
-    Add a recipe to the list with favourite recipes.
+    Adds the recipe to the list of user favorite recipes
     """
+
     path = request.META.get('HTTP_REFERER', '/')
     if request.method == 'POST':
         recipe = get_object_or_404(Recipe, name=request.POST.get('recipe'))
@@ -269,7 +273,7 @@ def add_favourite_recipe(request):
 
 def add_recipe(request):
     """
-    Create a new recipe.
+    Creates a new recipe and recipe ingredients. Adds these ingredients to the recipe.
     """
     if request.user.is_authenticated:
         if request.method == 'POST':
@@ -299,8 +303,9 @@ def add_recipe(request):
 
 def update_or_delete_recipe(request, pk):
     """
-    Update or delete a recipe.
+    Updates or deletes the recipe. Be used by creator of the recipe or by staff.
     """
+
     if request.user.is_authenticated:
         return_path = request.GET.get('next') if request.GET.get('next') else ''
         recipe = get_object_or_404(Recipe, id=pk)
@@ -340,7 +345,7 @@ def update_or_delete_recipe(request, pk):
 
 class SearchView(ListView):
     """
-    Site search using keywords.
+    Searches recipes using keywords.
     """
     model = Recipe
     template_name = 'yummy/search_results.html'

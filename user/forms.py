@@ -12,6 +12,10 @@ class ProfileImageInput(forms.ClearableFileInput):
 
 
 class RegisterUserForm(UserCreationForm):
+    """
+    Registers a new user in the system
+    """
+
     username = forms.CharField(label='Имя пользователя', widget=forms.TextInput(attrs={
         'class': 'form-control',
     }))
@@ -33,6 +37,10 @@ class RegisterUserForm(UserCreationForm):
 
 
 class LoginUserForm(AuthenticationForm):
+    """
+    Logs the user in the system
+    """
+
     username = forms.CharField(label='Имя пользователя', widget=forms.TextInput(attrs={
         'class': 'form-control',
     }))
@@ -44,6 +52,10 @@ class LoginUserForm(AuthenticationForm):
 
 
 class UserPasswordChangeForm(PasswordChangeForm):
+    """
+    Changes the user password
+    """
+
     old_password = forms.CharField(label='Старый пароль', widget=forms.PasswordInput(attrs={
         'class': 'form-control',
     }))
@@ -56,6 +68,10 @@ class UserPasswordChangeForm(PasswordChangeForm):
 
 
 class UserEditForm(forms.ModelForm):
+    """
+    Updates user profile information
+    """
+
     email = forms.CharField(label='Адрес электронной почты:', widget=forms.EmailInput(attrs={
         'class': 'form-control',
     }))
@@ -66,6 +82,10 @@ class UserEditForm(forms.ModelForm):
 
 
 class ProfileEditForm(forms.ModelForm):
+    """
+    Updates user personal information in the profile
+    """
+
     date_of_birth = forms.DateField(required=False, label='Дата рождения', widget=forms.DateInput(attrs={
         'class': 'form-control',
     }))
