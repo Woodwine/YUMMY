@@ -143,7 +143,7 @@ class AllGoodsView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['goods'] = {i[1]: Goods.objects.filter(type=i[0]) for i in GOODS_TYPE}
+        context['goods'] = {i: Goods.objects.filter(type=i[0]) for i in GOODS_TYPE}
         context['title'] = 'Продукты, используемые в рецептах'
         context['menu'] = MENU
         return context
