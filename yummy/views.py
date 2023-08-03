@@ -283,14 +283,15 @@ def add_recipe(request):
             with transaction.atomic():
                 if recipe_form.is_valid() and formset.is_valid():
                     recipe = recipe_form.save(commit=False)
+                    forms = formset.save(commit=False)
                     recipe.author = request.user.profile
                     recipe.time = recipe_form.cleaned_data['time']
                     recipe.save()
-                    for form in formset:
-                        if form.is_valid():
-                            item = form.save(commit=False)
-                            item.recipe = recipe
-                            item.save()
+                    for obj in formset.deleted_objects:
+                        obj.delete()
+                    for form in forms:
+                        form.recipe = recipe
+                        form.save()
                     messages.add_message(request, messages.SUCCESS, 'Рецепт успешно добавлен!')
                     return redirect(return_path) if return_path != '' else redirect('home')
         else:
@@ -323,14 +324,15 @@ def update_or_delete_recipe(request, pk):
                 with transaction.atomic():
                     if recipe_form.is_valid() and formset.is_valid():
                         new_recipe = recipe_form.save(commit=False)
+                        forms = formset.save(commit=False)
                         new_recipe.time = recipe_form.cleaned_data['time']
                         new_recipe.save()
-                        for form in formset:
-                            if form.is_valid():
-                                item = form.save(commit=False)
-                                if not item.recipe:
-                                    item.recipe = new_recipe
-                                item.save()
+                        for obj in formset.deleted_objects:
+                            obj.delete()
+                        for form in forms:
+                            if not form.recipe:
+                                form.recipe = new_recipe
+                            form.save()
                         messages.add_message(request, messages.SUCCESS, 'Рецепт успешно обновлен!')
                         return redirect(return_path) if return_path != '' else redirect('home')
         else:

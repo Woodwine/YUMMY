@@ -43,10 +43,8 @@ class AddProduct(forms.ModelForm):
 
     def clean_name(self):
         name = self.cleaned_data.get('name')
-        if name == '' or name is None:
+        if name.strip() == '' or name is None:
             raise forms.ValidationError(_('Поле не может быть пустым'))
-        if not name.isalpha():
-            raise forms.ValidationError(_('Название продукта не должно содержать цифры'))
         return name.capitalize()
 
 
