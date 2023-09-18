@@ -27,6 +27,18 @@ body {
     height: 90px;
 }
 
+.navbar-brand {
+    padding-left: 1rem !important;
+}
+
+.search-form {
+    padding-right: 4rem !important;
+}
+
+.left-button {
+    padding-right: 0.5rem !important;
+}
+
 .user__wrapp {
     display: flex;
     flex-direction: column;

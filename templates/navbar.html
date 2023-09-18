@@ -2,7 +2,7 @@
 
 <nav class="navbar bg-body-tertiary fixed-top navbar-dark bg-primary">
     <div class="container-fluid">
-        <div class="d-flex justify-content-start gap-3 align-items-center">
+        <div class="d-flex justify-content-start align-items-center">
             <button class="btn btn-warning" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
                     aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -11,12 +11,12 @@
                 <img src="{% static 'img/Logo3.svg' %}" alt="Logo">
             </a>
         </div>
-        <div class="d-inline-flex justify-content-between gap-5">
+        <div class="d-inline-flex justify-content-between">
             <form action="{% url 'search_results' %}" class="d-flex search-form" role="search" method="get">
                 <input class="form-control me-2" type="" placeholder="Поиск" aria-label="Search" name="q">
                 <button class="btn btn-warning" type="submit">Поиск</button>
             </form>
-            <div class="d-flex flex-row justify-content-between gap-2">
+            <div class="d-flex flex-row justify-content-between">
                 {% if request.user.is_authenticated %}
                 <a class="btn btn-warning add-recipe__btn" href="{% url 'add_recipe' %}?next={{ request.path }}">Добавить рецепт</a>
                 <div class="user__wrapp">
@@ -24,7 +24,7 @@
                     <img src="{{ user.profile.photo.url }}" alt="{{ user.username }}">
                     </a>
                 </div>
-                <a class="btn btn-warning" href="{% url 'logout' %}">Выход</a>
+                <a class="btn btn-warning left-button" href="{% url 'logout' %}">Выход</a>
                 {% else %}
                 <a class="btn btn-warning" href="{% url 'login' %}">Вход</a>
                 <a class="btn btn-warning" href="{% url 'register' %}">Регистрация</a>
