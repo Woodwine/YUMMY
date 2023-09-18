@@ -13,6 +13,8 @@ from django.contrib import messages
 from django.db import transaction
 from .utils import CUISINE_INFO, DEP_INFO, MENU
 
+RATING = (1, 2, 3, 4, 5)
+
 
 class HomePageView(TemplateView):
     """
@@ -41,7 +43,7 @@ class AllRecipesView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['const_rating'] = (1, 2, 3, 4, 5)
+        context['const_rating'] = RATING
         context['title'] = 'Все рецепты'
         context['menu'] = MENU
         return context
@@ -94,7 +96,7 @@ class DepartmentRecipesView(ListView):
     def get_context_data(self, **kwargs):
         dep = [value for key, value in DEPARTMENT_TYPE if key == self.kwargs['dep']][0]
         context = super().get_context_data(**kwargs)
-        context['const_rating'] = (1, 2, 3, 4, 5)
+        context['const_rating'] = RATING
         context['title'] = dep
         context['menu'] = MENU
         return context
@@ -121,7 +123,7 @@ class CuisineRecipesView(ListView):
         context = super().get_context_data(**kwargs)
         context['info'] = CUISINE_INFO[cus][1]
         context['img'] = CUISINE_INFO[cus][0]
-        context['const_rating'] = (1, 2, 3, 4, 5)
+        context['const_rating'] = RATING
         context['title'] = [value for key, value in CUISINE_TYPE if key == cus][0]
         context['menu'] = MENU
         return context
@@ -213,7 +215,7 @@ class OneRecipeView(DeletionMixin, SuccessMessageMixin, DetailView):
 
         context['comments'] = comments
         context['recipe_rating'] = comments.aggregate(Avg('rating'))['rating__avg']
-        context['const_rating'] = (1, 2, 3, 4, 5)
+        context['const_rating'] = RATING
         context['title'] = self.object
         context['menu'] = MENU
         return context
