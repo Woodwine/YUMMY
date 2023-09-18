@@ -27,18 +27,6 @@ body {
     height: 90px;
 }
 
-.navbar-brand {
-    padding-right: 1rem !important;
-}
-
-.search-form {
-    margin-right: 4rem !important;
-}
-
-.left-button {
-    margin-right: 0.5rem !important;
-}
-
 .user__wrapp {
     display: flex;
     flex-direction: column;
@@ -907,5 +895,16 @@ legend h3 {
     color: #888;
 }
 
+.navbar-brand {
+    margin-left: 1rem !important;
+}
+
+.search-form {
+    margin-right: 4rem !important;
+}
+
+.left-button {
+    margin-right: 0.5rem !important;
+}
 
 
