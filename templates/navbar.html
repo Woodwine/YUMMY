@@ -18,7 +18,7 @@
             </form>
             <div class="d-flex flex-row justify-content-between">
                 {% if request.user.is_authenticated %}
-                <a class="btn btn-warning add-recipe__btn left-button" href="{% url 'add_recipe' %}?next={{ request.path }}">Добавить рецепт</a>
+                <a class="btn btn-warning add-recipe__btn" href="{% url 'add_recipe' %}?next={{ request.path }}">Добавить рецепт</a>
                 <div class="user__wrapp">
                     <a href="{% url 'profile' %}">
                     <img src="{{ user.profile.photo.url }}" alt="{{ user.username }}">
